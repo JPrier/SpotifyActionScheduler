@@ -33,32 +33,6 @@ def add_tracks_to_playlist(playlist_id: str, track_ids: List[str]) -> None:
         logger.error(f"Failed to add tracks to playlist {playlist_id}: {e}")
         raise
 
-# ----- DOES NOT WORK ------
-# Spotify has changed the API and the positions field is ignored.
-# Currently, there is no info on whether this will be fixed or not.
-# For now this will be left here for reference
-
-# def remove_tracks_from_playlist(playlist_id: str, snapshot_id: str, duplicates: Dict[str, List[int]]) -> None:
-#     """
-#     Remove duplicate tracks from a Spotify playlist.
-#     duplicates = {track_id: [position1, position2, ...]}
-#     """
-#     payload = [
-#         { "uri": f"spotify:track:{track_id}", "positions": positions }
-#         for track_id, positions in duplicates.items()
-#     ]
-#     logger.info(f"Removing duplicates from playlist {playlist_id}-{snapshot_id}: {payload}")
-#     try:
-#         response = client.playlist_remove_specific_occurrences_of_items(
-#             playlist_id,
-#             payload,
-#             snapshot_id=snapshot_id
-#         )
-#         logger.info(f"Removed duplicates from playlist {playlist_id}-{snapshot_id}: {response}")
-#     except Exception as e:
-#         logger.error(f"Failed to remove duplicates {playlist_id}-{snapshot_id}:{payload} received error: {e}")
-#         raise
-
 def get_metadata(playlist_id: str) -> Dict[str, Any]:
     """
     Fetch metadata of a Spotify playlist.

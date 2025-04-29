@@ -2,9 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# ── figure out where this file lives and back up into your project root
-env_path = (Path(__file__).resolve().parent.parent / "spotify.env")
-load_dotenv(dotenv_path=env_path)
+load_dotenv(dotenv_path="spotifyActionService/spotify.env")
 
 def get_environ(key: str, default: str = None) -> str:
     """

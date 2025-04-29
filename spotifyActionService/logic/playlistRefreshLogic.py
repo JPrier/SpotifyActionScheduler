@@ -4,7 +4,7 @@ from spotifyActionService.models.actions import ActionType, Action, SyncAction, 
 
 def sync_playlists(action: SyncAction) -> None:
     """
-    Main entrypoint: fetch source & target playlists, convert to ordered ID lists, and log them.
+    Synchronize the source playlist with the target playlist by copying items from the source to the target.    
     """
     logger.info("Fetching target playlist items...")
     target_items = fetch_playlist_tracks(action.target_playlist_id)

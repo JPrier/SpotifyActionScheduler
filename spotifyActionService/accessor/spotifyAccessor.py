@@ -1,5 +1,5 @@
-from util.logger import logger
-from accessor.spotifyClient import spotify_client as client
+from spotifyActionService.util.logger import logger
+from spotifyActionService.accessor.spotifyClient import spotify_client as client
 
 def convert_playlist_to_ordered_id_list(playlist_items: list) -> list:
     """

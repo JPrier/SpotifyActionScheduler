@@ -1,4 +1,4 @@
-from util.env import get_environ
+from spotifyActionService.util.env import get_environ
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 

@@ -1,5 +1,5 @@
 import logging
-from util.env import get_env
+from spotifyActionService.util.env import get_env
 
 # Configure logging
 LOG_LEVEL = get_env("LOG_LEVEL", "INFO").upper()

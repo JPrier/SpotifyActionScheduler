@@ -1,3 +1,7 @@
+# Service
 *.env
+actions.json
+
+# Python
 __pycache__/
 *.cache

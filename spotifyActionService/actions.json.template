@@ -1,0 +1,23 @@
+{
+    "actions": [
+        {
+            "type": "sync",
+            "source_playlist_id": "37i9dQZF1DXc6IFF23C9jj",
+            "target_playlist_id": "37i9dQZF1DXc4OGPd7a25U",
+            "avoid_duplicates": true
+        },
+        {
+            "type": "archive",
+            "source_playlist_id": "37i9dQZF1DXc4OGPd7a25U",
+            "target_playlist_id": "37i9dQZF1DXc6IFF23C9jj",
+            "avoid_duplicates": false
+        },
+        {
+            "type": "sync",
+            "source_playlist_id": "37i9dQZF1DX8FwnYE6PRvL",
+            "target_playlist_id": "37i9dQZF1DX2TRYkJECvfB"
+            // omit avoid_duplicates to use the default (true)
+        }
+    ]
+}
+  

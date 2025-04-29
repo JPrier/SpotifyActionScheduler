@@ -6,10 +6,11 @@ class ActionType(StrEnum):
     SYNC = "sync"
     ARCHIVE = "archive"
 
-@dataclass
+@dataclass(kw_only=True)
 class Action:
     """Base class for all actions."""
     type: ActionType
+    timeBetweenActInSeconds: int = 360 # Default to 1 hour
 
 @dataclass
 class SyncAction(Action):

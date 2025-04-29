@@ -22,6 +22,10 @@ def sync_playlists(action: SyncAction) -> None:
     tracks_to_add = [track_id for track_id in source_ids if track_id not in target_ids]
     logger.info(f"Tracks to add: {tracks_to_add}")
 
+    if not tracks_to_add:
+        logger.info("No new tracks to add to target playlist.")
+        return
+
     add_tracks_to_playlist(action.target_playlist_id, tracks_to_add)
     logger.info(f"Added {len(tracks_to_add)} tracks to target playlist: {action.target_playlist_id}")
 

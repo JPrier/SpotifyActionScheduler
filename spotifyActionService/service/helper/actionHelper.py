@@ -1,17 +1,17 @@
-import json
+from spotifyActionService.accessor.configLoader import load_json_file
 from spotifyActionService.models.actions import ActionType, Action, SyncAction, ArchiveAction, ACTION_MAP
 from spotifyActionService.logic.playlistRefreshLogic import sync_playlists, archive_playlists
+from typing import Dict, List
 
-def parseActionFile(filepath: str) -> list[Action]:
+def parseActionFile(filepath: str) -> List[Action]:
     """
     Reads a JSON file with structure
       { "actions": [ { "type": "sync", "source": "...", ... }, ... ] }
     and returns a list of fully-typed Action instances.
     """
-    with open(filepath, "r") as f:
-        data = json.load(f)
+    data: Dict = load_json_file(filepath)
 
-    actions: list[Action] = []
+    actions: List[Action] = []
     for raw in data.get("actions", []):
         # parse & validate the enum
         try:
@@ -46,7 +46,7 @@ def handleAction(action: Action) -> None:
         case _:
             pass
 
-def handleActions(actions: list[Action]) -> None:
+def handleActions(actions: List[Action]) -> None:
     for action in actions:
         handleAction(action)
 

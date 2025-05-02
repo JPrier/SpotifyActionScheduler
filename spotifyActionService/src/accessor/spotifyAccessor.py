@@ -1,6 +1,7 @@
 from typing import List, Dict, Any
-from spotifyActionService.util.logger import logger
-from spotifyActionService.accessor.spotifyClient import spotify_client as client
+from spotifyActionService.src.util.logger import logger
+from spotifyActionService.src.accessor.spotifyClient import spotify_client as client
+
 
 def fetch_playlist_tracks(playlist_id: str) -> List[Dict[str, Any]]:
     """
@@ -21,6 +22,7 @@ def fetch_playlist_tracks(playlist_id: str) -> List[Dict[str, Any]]:
     logger.info(f"Fetched {len(tracks)} tracks from playlist {playlist_id}: {tracks}")
     return tracks
 
+
 def add_tracks_to_playlist(playlist_id: str, track_ids: List[str]) -> None:
     """
     Add tracks to a Spotify playlist.
@@ -33,12 +35,15 @@ def add_tracks_to_playlist(playlist_id: str, track_ids: List[str]) -> None:
         logger.error(f"Failed to add tracks to playlist {playlist_id}: {e}")
         raise
 
+
 def get_metadata(playlist_id: str) -> Dict[str, Any]:
     """
     Fetch metadata of a Spotify playlist.
     """
     try:
-        metadata = client.playlist(playlist_id, fields="id,name,description,snapshot_id")
+        metadata = client.playlist(
+            playlist_id, fields="id,name,description,snapshot_id"
+        )
         logger.info(f"Fetched metadata for playlist {playlist_id}: {metadata}")
         return metadata
     except Exception as e:

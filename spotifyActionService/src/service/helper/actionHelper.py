@@ -1,7 +1,11 @@
-from spotifyActionService.accessor.configLoader import load_json_file
-from spotifyActionService.models.actions import ActionType, Action, SyncAction, ArchiveAction, ACTION_MAP
-from spotifyActionService.logic.playlistRefreshLogic import sync_playlists, archive_playlists
+from spotifyActionService.src.accessor.configLoader import load_json_file
+from spotifyActionService.src.models.actions import ActionType, Action, ACTION_MAP
+from spotifyActionService.src.logic.playlistRefreshLogic import (
+    sync_playlists,
+    archive_playlists,
+)
 from typing import Dict, List
+
 
 def parseActionFile(filepath: str) -> List[Action]:
     """
@@ -16,10 +20,10 @@ def parseActionFile(filepath: str) -> List[Action]:
         # parse & validate the enum
         try:
             a_type = ActionType(raw["type"])
-        except KeyError:
-            raise KeyError(f"Missing 'type' in action: {raw!r}")
-        except ValueError:
-            raise ValueError(f"Unknown action type: {raw['type']}")
+        except KeyError as err:
+            raise KeyError(f"Missing 'type' in action: {raw!r}") from err
+        except ValueError as err:
+            raise ValueError(f"Unknown action type: {raw['type']}") from err
 
         cls = ACTION_MAP.get(a_type)
         if cls is None:
@@ -30,12 +34,13 @@ def parseActionFile(filepath: str) -> List[Action]:
             # strip out the raw['type'] since our constructor wants type=ActionType(...)
             params = {k: v for k, v in raw.items() if k != "type"}
             action_obj = cls(type=a_type, **params)
-        except TypeError as e:
-            raise ValueError(f"Invalid params for {a_type!r}: {e}")
+        except TypeError as err:
+            raise ValueError(f"Invalid params for {a_type!r}: {err}") from err
 
         actions.append(action_obj)
 
     return actions
+
 
 def handleAction(action: Action) -> None:
     match action.type:
@@ -46,12 +51,13 @@ def handleAction(action: Action) -> None:
         case _:
             pass
 
+
 def handleActions(actions: List[Action]) -> None:
     for action in actions:
         handleAction(action)
+
 
 if __name__ == "__main__":
     # Example usage
     actions = parseActionFile("spotifyActionService/actions.json")
     handleActions(actions)
-    

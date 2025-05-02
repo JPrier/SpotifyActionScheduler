@@ -1,0 +1,24 @@
+[project]
+name        = "spotify-actions"
+version     = "0.1.0"
+requires-python = ">=3.13"
+description = "Schedule Actions on Spotify"
+dependencies = []                
+
+[tool.ruff]
+line-length = 88
+lint.extend-select = ["E", "F", "B"]
+fix = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["spotifyActionService/tests"]
+python_files = ["*Test.py"]
+
+[dependency-groups]
+dev = [
+    "just>=0.8.162",
+    "pytest>=8.3.5",
+    "ruff>=0.11.8",
+    "typing-extensions>=4.13.2",
+]

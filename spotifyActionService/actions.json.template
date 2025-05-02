@@ -16,8 +16,6 @@
             "type": "sync",
             "source_playlist_id": "37i9dQZF1DX8FwnYE6PRvL",
             "target_playlist_id": "37i9dQZF1DX2TRYkJECvfB"
-            // omit avoid_duplicates to use the default (true)
         }
     ]
 }
-  

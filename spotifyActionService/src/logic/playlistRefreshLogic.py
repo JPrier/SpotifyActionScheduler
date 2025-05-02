@@ -1,11 +1,16 @@
-from spotifyActionService.util.logger import logger
-from spotifyActionService.accessor.spotifyAccessor import fetch_playlist_tracks, add_tracks_to_playlist, get_metadata
-from spotifyActionService.logic.mapper.spotifyMapper import map_to_id_set
-from spotifyActionService.models.actions import SyncAction, ArchiveAction
+from spotifyActionService.src.util.logger import logger
+from spotifyActionService.src.accessor.spotifyAccessor import (
+    fetch_playlist_tracks,
+    add_tracks_to_playlist,
+)
+from spotifyActionService.src.logic.mapper.spotifyMapper import map_to_id_set
+from spotifyActionService.src.models.actions import SyncAction, ArchiveAction
+
 
 def sync_playlists(action: SyncAction) -> None:
     """
-    Synchronize the source playlist with the target playlist by copying items from the source to the target.    
+    Synchronize the source playlist with the target playlist.
+    This will only add tracks that are in the source but not in the target.
     """
     logger.info("Fetching source playlist items...")
     source_items = fetch_playlist_tracks(action.source_playlist_id)
@@ -14,7 +19,7 @@ def sync_playlists(action: SyncAction) -> None:
     logger.info("Fetching target playlist items...")
     target_items = fetch_playlist_tracks(action.target_playlist_id)
     target_ids = map_to_id_set(target_items)
-            
+
     logger.info(f"Found {len(source_ids)} tracks in source playlist: {source_ids}")
     logger.info(f"Found {len(target_ids)} tracks in target playlist: {target_ids}")
 
@@ -27,7 +32,10 @@ def sync_playlists(action: SyncAction) -> None:
         return
 
     add_tracks_to_playlist(action.target_playlist_id, tracks_to_add)
-    logger.info(f"Added {len(tracks_to_add)} tracks to target playlist: {action.target_playlist_id}")
+    logger.info(
+        f"Added {len(tracks_to_add)} tracks to " +
+        f"target playlist: {action.target_playlist_id}"
+    )
 
 
 def archive_playlists(action: ArchiveAction) -> None:

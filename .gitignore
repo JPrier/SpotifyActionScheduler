@@ -5,3 +5,7 @@ actions.json
 # Python
 __pycache__/
 *.cache
+*.egg-info
+.ruff_cache/
+.venv/
+.pytest_cache/

@@ -1,6 +1,6 @@
-from spotifyActionService.src.accessor.configLoader import load_json_file
-from spotifyActionService.src.models.actions import ActionType, Action, ACTION_MAP
-from spotifyActionService.src.logic.playlistRefreshLogic import (
+from accessor.configLoader import load_json_file
+from models.actions import ActionType, Action, ACTION_MAP
+from logic.playlistRefreshLogic import (
     sync_playlists,
     archive_playlists,
 )

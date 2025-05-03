@@ -8,7 +8,7 @@ format:
     uvx ruff format . 
 
 test:
-    uv run --frozen pytest -q
+    PYTHONPATH=$PWD/spotifyActionService/src uv run --frozen pytest -q
 
 # All checks
 build: deps lint test

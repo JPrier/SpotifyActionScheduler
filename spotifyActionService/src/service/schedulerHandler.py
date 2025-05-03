@@ -1,11 +1,11 @@
 import time
 import schedule
-from spotifyActionService.src.service.helper.actionHelper import (
+from service.helper.actionHelper import (
     parseActionFile,
     handleAction,
 )
-from spotifyActionService.src.util.logger import logger
-from spotifyActionService.src.models.actions import Action
+from util.logger import logger
+from models.actions import Action
 
 # Setup Constants
 SLEEP_TIME_IN_SECONDS = 1

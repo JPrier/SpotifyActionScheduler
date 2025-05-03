@@ -1,10 +1,10 @@
-from spotifyActionService.src.util.logger import logger
-from spotifyActionService.src.accessor.spotifyAccessor import (
+from util.logger import logger
+from accessor.spotifyAccessor import (
     fetch_playlist_tracks,
     add_tracks_to_playlist,
 )
-from spotifyActionService.src.logic.mapper.spotifyMapper import map_to_id_set
-from spotifyActionService.src.models.actions import SyncAction, ArchiveAction
+from logic.mapper.spotifyMapper import map_to_id_set
+from models.actions import SyncAction, ArchiveAction
 
 
 def sync_playlists(action: SyncAction) -> None:

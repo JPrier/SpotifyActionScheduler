@@ -2,3 +2,4 @@ uv>=0.1.29
 ruff>=0.0.47
 pytest>=7.0.0
 typing-extensions>=4.0.0
+python-dotenv>=1.0.0

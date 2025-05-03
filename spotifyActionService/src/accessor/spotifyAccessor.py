@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
-from spotifyActionService.src.util.logger import logger
-from spotifyActionService.src.accessor.spotifyClient import spotify_client as client
+from util.logger import logger
+from accessor.spotifyClient import spotify_client as client
 
 
 def fetch_playlist_tracks(playlist_id: str) -> List[Dict[str, Any]]:

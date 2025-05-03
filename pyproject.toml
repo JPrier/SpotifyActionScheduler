@@ -1,24 +1,42 @@
 [project]
-name        = "spotify-actions"
-version     = "0.1.0"
+name            = "spotify-actions"
+version         = "0.1.0"
 requires-python = ">=3.13"
-description = "Schedule Actions on Spotify"
-dependencies = []                
+description     = "Schedule Actions on Spotify"
+dependencies    = [
+    "python-dotenv>=1.0.0",
+    "spotipy>=2.0.0"
+]
+
+[build-system]
+requires       = ["setuptools>=61.0","wheel"]
+build-backend  = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "spotifyActionService/src"
+
+[tool.setuptools.packages.find]
+where   = ["spotifyActionService/src"]
+include = ["*"]          # grab every package under src
 
 [tool.ruff]
-line-length = 88
+line-length        = 88
 lint.extend-select = ["E", "F", "B"]
-fix = true
+fix                = true
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-testpaths = ["spotifyActionService/tests"]
+testpaths = ["spotifyActionService/tst"]
 python_files = ["*Test.py"]
+
+[tool.uv.sources]
+spotify-actions = { workspace = true }
 
 [dependency-groups]
 dev = [
-    "just>=0.8.162",
-    "pytest>=8.3.5",
-    "ruff>=0.11.8",
-    "typing-extensions>=4.13.2",
+  "just>=0.8.162",
+  "pytest>=8.3.5",
+  "ruff>=0.11.8",
+  "spotify-actions",
+  "typing-extensions>=4.13.2",
 ]

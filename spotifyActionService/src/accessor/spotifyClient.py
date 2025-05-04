@@ -1,6 +1,6 @@
-from util.env import get_environ
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
+from util.env import get_environ
 
 # Spotify auth and client setup
 scope = "playlist-read-private playlist-modify-public playlist-modify-private"

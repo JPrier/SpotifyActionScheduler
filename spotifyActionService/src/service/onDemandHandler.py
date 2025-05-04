@@ -1,11 +1,11 @@
 from service.helper.actionHelper import (
-    parseActionFile,
     handleActions,
+    parseActionFile,
 )
 from util.logger import logger
 
 
-def main():
+def main() -> None:
     logger.info("Starting on-demand handler...")
 
     logger.info("Parsing action file...")

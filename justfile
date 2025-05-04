@@ -8,7 +8,11 @@ format:
     uvx ruff format . 
 
 test:
-    PYTHONPATH=$PWD/spotifyActionService/src uv run --frozen pytest -q
+    PYTHONPATH=$PWD/spotifyActionService/src \
+        uv run --frozen \
+        coverage run --source=$PWD/spotifyActionService/src -m \
+        pytest
+    uv run --frozen coverage html || true
+    uv run --frozen coverage report
 
-# All checks
 build: deps lint test

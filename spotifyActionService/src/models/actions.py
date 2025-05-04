@@ -1,6 +1,5 @@
-from enum import StrEnum
 from dataclasses import dataclass
-from typing import Type
+from enum import StrEnum
 
 
 class ActionType(StrEnum):
@@ -31,7 +30,7 @@ class ArchiveAction(Action):
 
 
 # Map each enum to its dataclass
-ACTION_MAP: dict[ActionType, Type[Action]] = {
+ACTION_MAP: dict[ActionType, type[Action]] = {
     ActionType.SYNC: SyncAction,
     ActionType.ARCHIVE: ArchiveAction,
 }

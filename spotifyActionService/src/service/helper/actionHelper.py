@@ -1,21 +1,20 @@
 from accessor.configLoader import load_json_file
-from models.actions import ActionType, Action, ACTION_MAP
 from logic.playlistRefreshLogic import (
-    sync_playlists,
     archive_playlists,
+    sync_playlists,
 )
-from typing import Dict, List
+from models.actions import ACTION_MAP, Action, ActionType
 
 
-def parseActionFile(filepath: str) -> List[Action]:
+def parseActionFile(filepath: str) -> list[Action]:
     """
     Reads a JSON file with structure
       { "actions": [ { "type": "sync", "source": "...", ... }, ... ] }
     and returns a list of fully-typed Action instances.
     """
-    data: Dict = load_json_file(filepath)
+    data: dict = load_json_file(filepath)
 
-    actions: List[Action] = []
+    actions: list[Action] = []
     for raw in data.get("actions", []):
         # parse & validate the enum
         try:
@@ -52,7 +51,7 @@ def handleAction(action: Action) -> None:
             pass
 
 
-def handleActions(actions: List[Action]) -> None:
+def handleActions(actions: list[Action]) -> None:
     for action in actions:
         handleAction(action)
 

@@ -1,9 +1,10 @@
-from typing import List, Dict, Any
-from util.logger import logger
+from typing import Any
+
 from accessor.spotifyClient import spotify_client as client
+from util.logger import logger
 
 
-def fetch_playlist_tracks(playlist_id: str) -> List[Dict[str, Any]]:
+def fetch_playlist_tracks(playlist_id: str) -> list[dict[str, Any]]:
     """
     Fetch all items from a Spotify playlist, including each item's 'added_at' timestamp.
     """
@@ -23,7 +24,7 @@ def fetch_playlist_tracks(playlist_id: str) -> List[Dict[str, Any]]:
     return tracks
 
 
-def add_tracks_to_playlist(playlist_id: str, track_ids: List[str]) -> None:
+def add_tracks_to_playlist(playlist_id: str, track_ids: list[str]) -> None:
     """
     Add tracks to a Spotify playlist.
     """
@@ -36,7 +37,7 @@ def add_tracks_to_playlist(playlist_id: str, track_ids: List[str]) -> None:
         raise
 
 
-def get_metadata(playlist_id: str) -> Dict[str, Any]:
+def get_metadata(playlist_id: str) -> dict[str, Any]:
     """
     Fetch metadata of a Spotify playlist.
     """

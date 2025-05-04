@@ -1,10 +1,10 @@
-from util.logger import logger
 from accessor.spotifyAccessor import (
-    fetch_playlist_tracks,
     add_tracks_to_playlist,
+    fetch_playlist_tracks,
 )
 from logic.mapper.spotifyMapper import map_to_id_set
-from models.actions import SyncAction, ArchiveAction
+from models.actions import ArchiveAction, SyncAction
+from util.logger import logger
 
 
 def sync_playlists(action: SyncAction) -> None:
@@ -33,8 +33,8 @@ def sync_playlists(action: SyncAction) -> None:
 
     add_tracks_to_playlist(action.target_playlist_id, tracks_to_add)
     logger.info(
-        f"Added {len(tracks_to_add)} tracks to " +
-        f"target playlist: {action.target_playlist_id}"
+        f"Added {len(tracks_to_add)} tracks to "
+        + f"target playlist: {action.target_playlist_id}"
     )
 
 

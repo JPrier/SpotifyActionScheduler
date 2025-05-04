@@ -1,17 +1,18 @@
 import time
+
 import schedule
+from models.actions import Action
 from service.helper.actionHelper import (
-    parseActionFile,
     handleAction,
+    parseActionFile,
 )
 from util.logger import logger
-from models.actions import Action
 
 # Setup Constants
 SLEEP_TIME_IN_SECONDS = 1
 
 
-def get_actions():
+def get_actions() -> list[Action]:
     """
     Fetch actions from the action file.
     """
@@ -21,7 +22,7 @@ def get_actions():
     return actions
 
 
-def schedule_action(action: Action):
+def schedule_action(action: Action) -> None:
     """
     Schedule the action to run at the specified time.
     """
@@ -29,7 +30,7 @@ def schedule_action(action: Action):
     schedule.every(action.timeBetweenActInSeconds).seconds.do(handleAction, action)
 
 
-def main():
+def main() -> None:
     actions = get_actions()
 
     # Setup Schedule

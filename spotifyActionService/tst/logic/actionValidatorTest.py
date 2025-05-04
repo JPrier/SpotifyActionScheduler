@@ -1,4 +1,4 @@
-import logic.actionValidator as av
+import logic.actionValidator as under_test
 import pytest
 from _pytest.capture import CaptureFixture
 from models.actions import ACTION_MAP, ActionType
@@ -10,12 +10,12 @@ def test_validate_json_load_error(
 ) -> None:
     # Simulate load_json_file raising
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: (_ for _ in ()).throw(RuntimeError("boom")),
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[ERROR] Unable to load JSON: boom" in captured.err
@@ -26,12 +26,12 @@ def test_validate_missing_actions_key(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {"not_actions": []},
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[ERROR] Top-level 'actions' key missing or not a list." in captured.err
@@ -42,12 +42,12 @@ def test_validate_actions_not_list(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {"actions": "nope"},
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[ERROR] Top-level 'actions' key missing or not a list." in captured.err
@@ -58,12 +58,12 @@ def test_validate_action_not_object(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {"actions": [1]},
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
@@ -75,12 +75,12 @@ def test_validate_missing_type_field(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {"actions": [{}]},
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
@@ -92,12 +92,12 @@ def test_validate_unknown_type(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {"actions": [{"type": "bogus"}]},
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
@@ -109,7 +109,7 @@ def test_validate_unregistered_type(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {
             "actions": [
@@ -128,7 +128,7 @@ def test_validate_unregistered_type(
         None,
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
@@ -140,12 +140,12 @@ def test_validate_invalid_params(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {"actions": [{"type": "sync"}]},
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
@@ -157,7 +157,7 @@ def test_validate_success(
     capsys: CaptureFixture,
 ) -> None:
     monkeypatch.setattr(
-        av,
+        under_test,
         "load_json_file",
         lambda path: {
             "actions": [
@@ -170,7 +170,7 @@ def test_validate_success(
         },
     )
 
-    code = av.validate("dummy.json")
+    code = under_test.validate("dummy.json")
     captured = capsys.readouterr()
     assert code == 0
     assert "✅ Validation succeeded: all actions are well-formed." in captured.out

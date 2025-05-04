@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Environment
-        run: just setup
+        run: bash scripts/setup.sh
 
       - name: Run Build
         run: just build

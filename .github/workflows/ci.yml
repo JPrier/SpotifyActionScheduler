@@ -42,4 +42,5 @@ jobs:
         
       - name: Validate Actions file
         run: |
-          python spotifyActionService/src/logic/actionValidator.py spotifyActionService/actions.json
+          uv run python spotifyActionService/src/logic/actionValidator.py \
+            spotifyActionService/actions.json

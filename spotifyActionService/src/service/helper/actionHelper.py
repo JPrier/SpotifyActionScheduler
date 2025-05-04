@@ -56,7 +56,7 @@ def handleActions(actions: list[Action]) -> None:
         handleAction(action)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Example usage
     actions = parseActionFile("spotifyActionService/actions.json")
     handleActions(actions)

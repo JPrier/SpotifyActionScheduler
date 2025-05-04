@@ -28,7 +28,7 @@ set +a
 # --------------- INSTALL TOOLS ---------------
 # Sync & install tools/deps
 echo "[INFO] Syncing & installing tools…"
-uv add --dev . 
+# uv add --dev . 
 uv sync                                      
 
 # Append to ~/.bashrc if necessary

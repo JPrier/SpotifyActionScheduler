@@ -1,5 +1,8 @@
-deps:
+setup:
     bash scripts/setup.sh
+
+deps:
+    uv sync
 
 lint:
     uvx ruff check --exit-zero .
@@ -15,4 +18,4 @@ test:
     uv run --frozen coverage html || true
     uv run --frozen coverage report
 
-build: deps lint test
+build: deps lint format test

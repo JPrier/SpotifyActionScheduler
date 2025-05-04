@@ -43,5 +43,5 @@ def main() -> None:
         time.sleep(SLEEP_TIME_IN_SECONDS)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

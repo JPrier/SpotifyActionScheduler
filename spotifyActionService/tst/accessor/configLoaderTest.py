@@ -42,7 +42,7 @@ def test_propagates_other_io_errors(
     # monkeypatch open() to raise ZeroDivisionError
     monkeypatch.setattr(
         "builtins.open",
-        lambda *args, **kwargs: 1/0,
+        lambda *args, **kwargs: 1 / 0,
     )
 
     with pytest.raises(ZeroDivisionError):

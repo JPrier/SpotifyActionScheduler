@@ -23,7 +23,6 @@ include            = ["src*"]
 [tool.ruff]
 line-length        = 88
 lint.extend-select = ["E", "F", "I", "B", "ANN", "UP", "TC"]
-lint.ignore        = ["ANN101", "ANN102"]
 fix                = true
 fix-only           = false
 

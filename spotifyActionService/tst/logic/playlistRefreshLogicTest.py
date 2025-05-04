@@ -21,18 +21,18 @@ def test_sync_playlists_no_new(
     dummy_items = object()
     monkeypatch.setattr(
         under_test,
-        'fetch_playlist_tracks',
+        "fetch_playlist_tracks",
         lambda pid: dummy_items,
     )
     monkeypatch.setattr(
         under_test,
-        'map_to_id_set',
-        lambda items: {'a', 'b'} if items is dummy_items else set(),
+        "map_to_id_set",
+        lambda items: {"a", "b"} if items is dummy_items else set(),
     )
     called: list[Any] = []
     monkeypatch.setattr(
         under_test,
-        'add_tracks_to_playlist',
+        "add_tracks_to_playlist",
         lambda pid, ids: called.append((pid, ids)),
     )
 
@@ -60,20 +60,22 @@ def test_sync_playlists_adds_new_tracks(
     tgt_items = object()
     monkeypatch.setattr(
         under_test,
-        'fetch_playlist_tracks',
+        "fetch_playlist_tracks",
         lambda pid: src_items if pid == action.source_playlist_id else tgt_items,
     )
     monkeypatch.setattr(
         under_test,
-        'map_to_id_set',
-        lambda items: {'1', '2', '3'} if items is src_items else {'2'},
+        "map_to_id_set",
+        lambda items: {"1", "2", "3"} if items is src_items else {"2"},
     )
     calls: list[Any] = []
+
     def fake_add(pid: str, ids: list[str]) -> None:
         calls.append((pid, ids))
+
     monkeypatch.setattr(
         under_test,
-        'add_tracks_to_playlist',
+        "add_tracks_to_playlist",
         fake_add,
     )
 
@@ -84,7 +86,7 @@ def test_sync_playlists_adds_new_tracks(
     assert len(calls) == 1
     target_id, track_list = calls[0]
     assert target_id == action.target_playlist_id
-    assert set(track_list) == {'1', '3'}
+    assert set(track_list) == {"1", "3"}
     expected_msg = (
         f"Added {len(track_list)} tracks to "
         f"target playlist: {action.target_playlist_id}"
@@ -107,13 +109,13 @@ def test_archive_playlists_logs(
     dummy_items = object()
     monkeypatch.setattr(
         under_test,
-        'fetch_playlist_tracks',
+        "fetch_playlist_tracks",
         lambda pid: dummy_items,
     )
     monkeypatch.setattr(
         under_test,
-        'map_to_id_set',
-        lambda items: {'x', 'y'},
+        "map_to_id_set",
+        lambda items: {"x", "y"},
     )
 
     # execute
@@ -121,5 +123,6 @@ def test_archive_playlists_logs(
 
     # verify logs
     assert "Fetching source playlist items..." in caplog.text
-    assert "Found 2 tracks in source playlist: {'x', 'y'}" in caplog.text
+    assert "Found 2 tracks in source playlist:" in caplog.text
+    assert "'x'" in caplog.text and "'y'" in caplog.text
     assert "Archiving source playlist..." in caplog.text

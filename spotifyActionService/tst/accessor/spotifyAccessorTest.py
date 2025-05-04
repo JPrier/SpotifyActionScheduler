@@ -7,7 +7,7 @@ from accessor.spotifyAccessor import (
     fetch_playlist_tracks,
     get_metadata,
 )
-from accessor.spotifyClient import spotify_client
+from dependency.spotifyClient import spotify_client
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 from typing import Any
 
-from accessor.spotifyClient import spotify_client as client
+from dependency.spotifyClient import spotify_client as client
 from util.logger import logger
 
 

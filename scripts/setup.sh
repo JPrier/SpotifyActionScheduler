@@ -17,11 +17,11 @@ echo "[INFO] Setting up environment…"
 
 # Ensure uv tools are live in THIS session
 export PATH="$UV_BIN:$HOME/.cargo/bin:$PATH"
+export UV_LINK_MODE=copy
 
 # Source .env files
 set -a
 source spotifyActionService/spotify.env
-source project.env
 set +a
 
 

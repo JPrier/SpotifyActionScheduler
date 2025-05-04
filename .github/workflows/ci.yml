@@ -21,8 +21,9 @@ jobs:
 
       - name: Decrypt actions.json
         run: |
-          gpg --batch --yes \
+          gpg --quiet --batch --yes \
             --passphrase "${{ secrets.GPG_PASSPHRASE }}" \
+            --pinentry-mode loopback \
             --output spotifyActionService/actions.json \
             --decrypt spotifyActionService/actions.json.gpg
 

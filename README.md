@@ -4,6 +4,10 @@ A lightweight, configurable Python tool to sync between your Spotify “Liked So
 
 ---
 
+## CI Status
+
+[![CI](https://github.com/USERNAME/REPOSITORY/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/USERNAME/REPOSITORY/actions/workflows/ci.yml)
+
 ## 🚀 Features
 
 - **Bidirectional sync**  

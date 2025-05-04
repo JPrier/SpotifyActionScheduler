@@ -2,16 +2,46 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install just CLI
+        run: |
+          curl -sL https://just.systems/install.sh \
+            | bash -s -- --to ~/.local/bin
+          echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Create env files
+        run: |
+          cat <<EOF > spotifyActionService/spotify.env
+          SPOTIPY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIPY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIPY_REDIRECT_URI=${{ secrets.SPOTIFY_REDIRECT_URI }}
+          EOF
+
+      - name: Decrypt actions.json
+        run: |
+          gpg --quiet --batch --yes \
+            --passphrase "${{ secrets.GPG_PASSPHRASE }}" \
+            --pinentry-mode loopback \
+            --output spotifyActionService/actions.json \
+            --decrypt spotifyActionService/actions.json.gpg
+
+      - name: Setup Environment
+        run: bash scripts/setup.sh
+
       - name: Run Build
-        run: just build                       
+        run: just build
+        
+      - name: Validate Actions file
+        env:
+          PYTHONPATH: ${{ github.workspace }}/spotifyActionService/src
+        run: |
+          python spotifyActionService/src/logic/actionValidator.py spotifyActionService/actions.json

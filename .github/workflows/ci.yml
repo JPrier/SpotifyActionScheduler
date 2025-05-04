@@ -41,6 +41,7 @@ jobs:
         run: just build
         
       - name: Validate Actions file
+        env:
+          PYTHONPATH: ${{ github.workspace }}/spotifyActionService/src
         run: |
-          uv run python spotifyActionService/src/logic/actionValidator.py \
-            spotifyActionService/actions.json
+          python spotifyActionService/src/logic/actionValidator.py spotifyActionService/actions.json

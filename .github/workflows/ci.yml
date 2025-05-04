@@ -21,8 +21,8 @@ jobs:
       - name: Create env files
         run: |
           cat <<EOF > spotifyActionService/spotify.env
-          SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIPY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIPY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
           EOF
 
       - name: Decrypt actions.json

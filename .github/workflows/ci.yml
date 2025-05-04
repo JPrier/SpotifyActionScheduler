@@ -12,6 +12,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Create env files
+        run: |
+          cat <<EOF > spotifyActionService/spotify.env
+          SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          EOF
+
+      - name: Decrypt actions.json
+        run: |
+          gpg --batch --yes \
+            --passphrase "${{ secrets.GPG_PASSPHRASE }}" \
+            --output spotifyActionService/actions.json \
+            --decrypt spotifyActionService/actions.json.gpg
+
       - name: Setup Environment
         run: bash scripts/setup.sh
 

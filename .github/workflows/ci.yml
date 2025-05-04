@@ -2,16 +2,22 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Environment
+        run: just setup
+
       - name: Run Build
-        run: just build                       
+        run: just build
+        
+      - name: Validate Actions file
+        run: |
+          python spotifyActionService/src/logic/actionValidator.py spotifyActionService/actions.json

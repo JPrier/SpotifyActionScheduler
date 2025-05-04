@@ -23,6 +23,7 @@ jobs:
           cat <<EOF > spotifyActionService/spotify.env
           SPOTIPY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIPY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIPY_REDIRECT_URI=${{ secrets.SPOTIFY_REDIRECT_URI }}
           EOF
 
       - name: Decrypt actions.json

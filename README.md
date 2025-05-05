@@ -39,7 +39,9 @@ pip install spotifyactionscheduler
 ##### via uv
 
 ```bash
-uv install spotifyactionscheduler
+uv venv .venv
+source .venv/bin/activate  # (or .venv\\Scripts\\activate on Windows)
+uv pip install spotifyactionscheduler
 ```
 
 This will install the `spotifyActionService` package and its dependencies. You can then skip to the **Configuration** section below to set up your credentials and actions.
@@ -57,23 +59,21 @@ If you prefer to use the latest code from GitHub or contribute to the project:
 
 2. **Install the package and dependencies:**
 
-   * You can install in editable/development mode using pip:
+   * **Option 1: Using pip**
+    This will install all necessary libraries (Spotify API client, etc.) for the scheduler to run.
+    ```bash
+    pip install -e .
+    pip install -r requirements.txt
+    ```
 
-     ```bash
-     pip install -e .
-     ```
+   * ***Preferred* -- Option 2: Using uv:**
+    ✅ This installs dependencies from uv.lock and installs the project in editable mode.
 
-   * *Alternatively*, install the requirements directly:
-
-     ```bash
-     pip install -r requirements.txt
-     ```
-
-     ```bash
-     uv sync
-     ```
-
-   This will install all necessary libraries (Spotify API client, etc.) for the scheduler to run.
+    ```bash
+    uv venv .venv
+    source .venv/bin/activate  # (or .venv\\Scripts\\activate on Windows)
+    uv sync
+    ```
 
 ### Using Docker
 
@@ -165,6 +165,25 @@ Here’s an example **`actions.json`** with a couple of typical scenarios:
 **How to find Spotify Playlist IDs:** You can get the playlist ID from the Spotify app or web URL. For example, in a Spotify playlist link like `https://open.spotify.com/playlist/37i9dQZF1DX2TRYkJECvfB`, the string after `/playlist/` (here `37i9dQZF1DX2TRYkJECvfB`) is the playlist ID.
 
 Once you’ve created your `actions.json` file with the actions you want, place it in the working directory where you will run the scheduler (or in the project directory if running from source). By default, the scheduler will look for a file named **`actions.json`** in its directory. Ensure the JSON file is valid (structure and quotes, etc.); the application will parse this and run the specified sync actions.
+
+### 3. Validation Actions
+Before running the scheduler, you can validate your actions.json configuration file using the provided validation script.
+
+Run the following command:
+
+```bash
+python scripts/actionValidation.py
+```
+This will parse your actions.json and check for:
+
+* ✅ JSON syntax validity
+* ✅ Required fields (type, target_playlist_id, etc.)
+* ✅ Duplicate or conflicting actions
+* ✅ Unsupported action types
+
+If the script prints no errors, your config is valid! Otherwise, it will report issues you should fix before running the scheduler.
+
+👉 **Recommendation**: Always validate your actions after editing actions.json to catch mistakes early.
 
 ## Running the Scheduler
 

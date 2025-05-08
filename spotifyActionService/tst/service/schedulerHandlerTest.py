@@ -18,7 +18,7 @@ class DummyProcessor:
         ...
 
 
-def test_schedule_action_creates_job(monkeypatch) -> None:
+def test_schedule_action_creates_job(monkeypatch: pytest.MonkeyPatch) -> None:
     calls = []
 
     class FakeJob:
@@ -42,7 +42,7 @@ def test_schedule_action_creates_job(monkeypatch) -> None:
     assert calls == [(5, dummy_processor.handle_action, dummy_action)]
 
 
-def test_main_schedules_and_runs_once(monkeypatch) -> None:
+def test_main_schedules_and_runs_once(monkeypatch: pytest.MonkeyPatch) -> None:
     # 1) stub external ActionProcessor.parse_action_file
     actions = [
         Action(type=None, timeBetweenActInSeconds=3),

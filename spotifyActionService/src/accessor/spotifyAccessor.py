@@ -1,5 +1,5 @@
 from typing import Any, List, Dict, Optional
-
+from spotipy import Spotify
 from dependency.spotifyClient import spotify_client
 from util.logger import logger
 
@@ -10,7 +10,7 @@ class SpotifyAccessor:
     """
     def __init__(
         self,
-        client: Any = spotify_client,
+        client: Spotify = spotify_client,
         user_id: Optional[str] = None,
     ):
         self.client = client
@@ -96,18 +96,10 @@ class SpotifyAccessor:
             else:
                 break
 
-        logger.info(f"No playlist found with name '{name}'")
+        logger.info(f"No playlist found with name '{playlist_name}'")
         return None
     
     def create_playlist_with_name(self, playlist_name: str, public: bool = False) -> str:
-        """
-        Ensure a playlist exists with the given name and return its ID.
-        Creates it if it doesn’t exist.
-        """
-        existing_id = self.get_playlist_id_by_name(playlist_name)
-        if existing_id:
-            logger.info(f"Playlist '{playlist_name}' already exists → {existing_id}")
-            return existing_id
         try:
             logger.info(f"Creating new playlist '{playlist_name}' (public={public}) for user {self.user_id}")
             new = self.client.user_playlist_create(
@@ -121,3 +113,15 @@ class SpotifyAccessor:
         except Exception as e:
             logger.error(f"Failed to create playlist '{playlist_name}': {e}")
             raise
+    
+    def get_or_create_playlist_with_name(self, playlist_name: str, public: bool = False) -> str:
+        """
+        Ensure a playlist exists with the given name and return its ID.
+        Creates it if it doesn’t exist.
+        """
+        existing_id = self.get_playlist_id_by_name(playlist_name)
+        if existing_id:
+            logger.info(f"Playlist '{playlist_name}' already exists → {existing_id}")
+            return existing_id
+        logger.info(f"Playlist '{playlist_name}' not found, creating new one")
+        return self.create_playlist_with_name(playlist_name, public=public)

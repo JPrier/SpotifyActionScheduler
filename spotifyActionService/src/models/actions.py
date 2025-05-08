@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Optional
 
 
 class ActionType(StrEnum):
@@ -13,7 +12,7 @@ class Action:
     """Base class for all actions."""
 
     type: ActionType
-    timeBetweenActInSeconds: int = 360  # Default to 1 hour
+    timeBetweenActInSeconds: int = 30  # Default to 1 hour
 
 
 @dataclass
@@ -26,7 +25,7 @@ class SyncAction(Action):
 @dataclass
 class ArchiveAction(Action):
     source_playlist_id: str
-    target_playlist_id: Optional[str]
+    target_playlist_id: str | None
     avoid_duplicates: bool = True
 
 

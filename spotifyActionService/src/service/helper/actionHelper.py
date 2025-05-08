@@ -1,62 +1,63 @@
 from accessor.configLoader import load_json_file
-from spotifyActionService.src.logic.playlistLogic import (
-    archive_playlists,
-    sync_playlists,
-)
+from logic.playlistLogic import PlaylistService
 from models.actions import ACTION_MAP, Action, ActionType
+from util.logger import logger
 
 
-def parseActionFile(filepath: str) -> list[Action]:
+class ActionProcessor:
     """
-    Reads a JSON file with structure
-      { "actions": [ { "type": "sync", "source": "...", ... }, ... ] }
-    and returns a list of fully-typed Action instances.
+    Encapsulates parsing and handling of action definitions.
     """
-    data: dict = load_json_file(filepath)
 
-    actions: list[Action] = []
-    for raw in data.get("actions", []):
-        # parse & validate the enum
-        try:
-            a_type = ActionType(raw["type"])
-        except KeyError as err:
-            raise KeyError(f"Missing 'type' in action: {raw!r}") from err
-        except ValueError as err:
-            raise ValueError(f"Unknown action type: {raw['type']}") from err
+    def __init__(self, playlist_service: PlaylistService):
+        self.playlist_service = playlist_service
 
-        cls = ACTION_MAP.get(a_type)
-        if cls is None:
-            raise RuntimeError(f"No class registered for action type {a_type}")
+    def parse_action_file(self, filepath: str) -> list[Action]:
+        """
+        Reads a JSON file and returns a list of Action instances.
+        """
+        data: dict = load_json_file(filepath)
+        actions: list[Action] = []
 
-        # Build the dataclass—will TypeError if required fields are missing
-        try:
-            # strip out the raw['type'] since our constructor wants type=ActionType(...)
-            params = {k: v for k, v in raw.items() if k != "type"}
-            action_obj = cls(type=a_type, **params)
-        except TypeError as err:
-            raise ValueError(f"Invalid params for {a_type!r}: {err}") from err
+        for raw in data.get("actions", []):
+            # parse & validate the enum
+            try:
+                a_type = ActionType(raw["type"])
+            except KeyError as err:
+                raise KeyError(f"Missing 'type' in action: {raw!r}") from err
+            except ValueError as err:
+                raise ValueError(f"Unknown action type: {raw['type']}") from err
 
-        actions.append(action_obj)
+            cls = ACTION_MAP.get(a_type)
+            if cls is None:
+                raise RuntimeError(f"No class registered for action type {a_type}")
 
-    return actions
+            # Build the dataclass—will TypeError if required fields are missing
+            try:
+                params = {k: v for k, v in raw.items() if k != "type"}
+                action_obj = cls(type=a_type, **params)
+            except TypeError as err:
+                raise ValueError(f"Invalid params for {a_type!r}: {err}") from err
 
+            actions.append(action_obj)
 
-def handleAction(action: Action) -> None:
-    match action.type:
-        case ActionType.SYNC:
-            sync_playlists(action)
-        case ActionType.ARCHIVE:
-            archive_playlists(action)
-        case _:
-            pass
+        return actions
 
+    def handle_action(self, action: Action) -> None:
+        """
+        Dispatches a single Action to the appropriate PlaylistService method.
+        """
+        match action.type:
+            case ActionType.SYNC:
+                self.playlist_service.sync_playlists(action)
+            case ActionType.ARCHIVE:
+                self.playlist_service.archive_playlists(action)
+            case _:
+                logger.warning(f"Unhandled action type: {action.type}")
 
-def handleActions(actions: list[Action]) -> None:
-    for action in actions:
-        handleAction(action)
-
-
-if __name__ == "__main__":  # pragma: no cover
-    # Example usage
-    actions = parseActionFile("spotifyActionService/actions.json")
-    handleActions(actions)
+    def handle_actions(self, actions: list[Action]) -> None:
+        """
+        Processes a list of Actions in sequence.
+        """
+        for action in actions:
+            self.handle_action(action)

@@ -1,17 +1,20 @@
-from typing import Any, List, Dict, Optional
-from spotipy import Spotify
+from typing import Any
+
 from dependency.spotifyClient import spotify_client
+from spotipy import Spotify
 from util.logger import logger
+
 
 class SpotifyAccessor:
     """
     Encapsulates a Spotipy client and current user ID, and provides
     helper methods for common playlist operations.
     """
+
     def __init__(
         self,
         client: Spotify = spotify_client,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
     ):
         self.client = client
         # If user_id not provided, fetch from the API
@@ -30,12 +33,12 @@ class SpotifyAccessor:
             logger.error(f"Failed to fetch current user ID: {e}")
             raise
 
-    def fetch_playlist_tracks(self, playlist_id: str) -> List[Dict[str, Any]]:
+    def fetch_playlist_tracks(self, playlist_id: str) -> list[dict[str, Any]]:
         """
         Fetch all items from a Spotify playlist, including each item's 'added_at' timestamp.
         Handles pagination automatically.
         """
-        tracks: List[Dict[str, Any]] = []
+        tracks: list[dict[str, Any]] = []
         page = 0
         resp = self.client.playlist_items(
             playlist_id,
@@ -53,7 +56,7 @@ class SpotifyAccessor:
         logger.info(f"Fetched {len(tracks)} tracks from playlist {playlist_id}")
         return tracks
 
-    def add_tracks_to_playlist(self, playlist_id: str, track_ids: List[str]) -> None:
+    def add_tracks_to_playlist(self, playlist_id: str, track_ids: list[str]) -> None:
         """
         Add a batch of track IDs to a Spotify playlist.
         """
@@ -65,7 +68,7 @@ class SpotifyAccessor:
             logger.error(f"Failed to add tracks to playlist {playlist_id}: {e}")
             raise
 
-    def get_playlist_metadata(self, playlist_id: str) -> Dict[str, Any]:
+    def get_playlist_metadata(self, playlist_id: str) -> dict[str, Any]:
         """
         Fetch basic metadata for a Spotify playlist.
         """
@@ -80,7 +83,7 @@ class SpotifyAccessor:
             logger.error(f"Failed to fetch metadata for playlist {playlist_id}: {e}")
             raise
 
-    def get_playlist_id_by_name(self, playlist_name: str) -> Optional[str]:
+    def get_playlist_id_by_name(self, playlist_name: str) -> str | None:
         """
         Return the first playlist ID matching `name` in the current user's library,
         or None if not found.
@@ -98,10 +101,14 @@ class SpotifyAccessor:
 
         logger.info(f"No playlist found with name '{playlist_name}'")
         return None
-    
-    def create_playlist_with_name(self, playlist_name: str, public: bool = False) -> str:
+
+    def create_playlist_with_name(
+        self, playlist_name: str, public: bool = False
+    ) -> str:
         try:
-            logger.info(f"Creating new playlist '{playlist_name}' (public={public}) for user {self.user_id}")
+            logger.info(
+                f"Creating new playlist '{playlist_name}' (public={public}) for user {self.user_id}"
+            )
             new = self.client.user_playlist_create(
                 user=self.user_id,
                 name=playlist_name,
@@ -113,8 +120,10 @@ class SpotifyAccessor:
         except Exception as e:
             logger.error(f"Failed to create playlist '{playlist_name}': {e}")
             raise
-    
-    def get_or_create_playlist_with_name(self, playlist_name: str, public: bool = False) -> str:
+
+    def get_or_create_playlist_with_name(
+        self, playlist_name: str, public: bool = False
+    ) -> str:
         """
         Ensure a playlist exists with the given name and return its ID.
         Creates it if it doesn’t exist.

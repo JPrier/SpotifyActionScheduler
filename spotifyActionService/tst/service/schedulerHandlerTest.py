@@ -1,4 +1,3 @@
-import logging
 import time
 from collections.abc import Callable
 
@@ -8,30 +7,9 @@ import service.schedulerHandler as under_test
 from models.actions import Action
 from service.schedulerHandler import (
     SLEEP_TIME_IN_SECONDS,
-    get_actions,
     main,
     schedule_action,
 )
-
-
-def test_get_actions(
-    monkeypatch: pytest.MonkeyPatch,
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    caplog.set_level(logging.INFO)
-    fake_actions = ["a1", "a2"]
-    monkeypatch.setattr(
-        under_test,
-        "parseActionFile",
-        lambda path: fake_actions,
-    )
-
-    result = get_actions()
-
-    assert result == fake_actions
-    log = caplog.text
-    assert "Parsing action file..." in log
-    assert "Parsed 2 actions:" in log
 
 
 def test_schedule_action_creates_job(

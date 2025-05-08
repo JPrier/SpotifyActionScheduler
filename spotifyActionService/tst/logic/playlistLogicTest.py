@@ -1,8 +1,8 @@
 import logging
 from typing import Any
 
-from logic.playlistLogic import PlaylistService as under_test
 import pytest
+from logic.playlistLogic import PlaylistService as under_test
 from models.actions import ArchiveAction, SyncAction
 
 

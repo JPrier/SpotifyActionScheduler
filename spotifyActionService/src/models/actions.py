@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Optional
 
 
 class ActionType(StrEnum):
@@ -25,7 +26,7 @@ class SyncAction(Action):
 @dataclass
 class ArchiveAction(Action):
     source_playlist_id: str
-    target_playlist_id: str
+    target_playlist_id: Optional[str]
     avoid_duplicates: bool = True
 
 

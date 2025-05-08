@@ -49,3 +49,4 @@ def archive_playlists(action: ArchiveAction) -> None:
     logger.info(f"Found {len(source_ids)} tracks in source playlist: {source_ids}")
 
     logger.info("Archiving source playlist...")
+    # Create playlist 

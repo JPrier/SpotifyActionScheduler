@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-import logic.playlistRefresh as under_test
+from logic.playlistLogic import PlaylistService as under_test
 import pytest
 from models.actions import ArchiveAction, SyncAction
 

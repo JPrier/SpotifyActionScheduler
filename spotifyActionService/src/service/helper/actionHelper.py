@@ -1,5 +1,5 @@
 from accessor.configLoader import load_json_file
-from logic.playlistRefresh import (
+from spotifyActionService.src.logic.playlistLogic import (
     archive_playlists,
     sync_playlists,
 )

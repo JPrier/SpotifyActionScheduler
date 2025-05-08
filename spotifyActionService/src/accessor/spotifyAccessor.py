@@ -60,7 +60,10 @@ class SpotifyAccessor:
         """
         Add a batch of track IDs to a Spotify playlist.
         """
-        logger.info(f"Adding {len(track_ids)} tracks to playlist {playlist_id}")
+        logger.info(
+            f"Adding {len(track_ids)} tracks to playlist {playlist_id}: "
+            + f"{track_ids}"
+        )
         try:
             response = self.client.playlist_add_items(playlist_id, track_ids)
             logger.info(f"Added tracks to playlist {playlist_id}: {response}")

@@ -1,6 +1,7 @@
 import time
 
 import schedule
+from accessor.spotifyAccessor import SpotifyAccessor
 from logic.playlistLogic import PlaylistService
 from models.actions import Action
 from service.helper.actionHelper import ActionProcessor
@@ -16,12 +17,12 @@ def schedule_action(processor: ActionProcessor, action: Action) -> None:
     """
     logger.info(f"Scheduling action: {action}")
     schedule.every(action.timeBetweenActInSeconds).seconds.do(
-        processor.handleAction, action
+        processor.handle_action, action
     )
 
 
 def main() -> None:
-    processor = ActionProcessor(playlist_service=PlaylistService())
+    processor = ActionProcessor(playlist_service=PlaylistService(SpotifyAccessor()))
     actions = processor.parse_action_file("spotifyActionService/actions.json")
 
     # Setup Schedule

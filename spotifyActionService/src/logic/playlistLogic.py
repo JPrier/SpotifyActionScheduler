@@ -11,9 +11,8 @@ class PlaylistService:
     Provides methods to manage playlists using a SpotifyAccessor.
     """
 
-    def __init__(self, accessor: SpotifyAccessor):
+    def __init__(self, accessor: SpotifyAccessor) -> None:
         self.accessor = accessor
-        return
 
     def filter_items_after_time(self, items: list[str], time_in_seconds: int) -> list:
         """
@@ -22,7 +21,8 @@ class PlaylistService:
         """
         cutoff = datetime.now(UTC) - timedelta(seconds=time_in_seconds)
         logger.info(
-            f"Filtering tracks added after {cutoff.isoformat()} (last {time_in_seconds} seconds)"
+            f"Filtering tracks added after {cutoff.isoformat()} "
+            + f"(last {time_in_seconds} seconds)"
         )
 
         filtered_items = [
@@ -59,13 +59,15 @@ class PlaylistService:
 
         self.accessor.add_tracks_to_playlist(action.target_playlist_id, tracks_to_add)
         logger.info(
-            f"Added {len(tracks_to_add)} tracks to target playlist: {action.target_playlist_id}"
+            f"Added {len(tracks_to_add)} tracks to target playlist: "
+            + f"{action.target_playlist_id}"
         )
 
     def archive_playlists(self, action: ArchiveAction) -> None:
         """
-        Archive the source playlist by copying its items into an '{source_name}-Archive' playlist.
-        Creates the archive playlist if it does not exist, and optionally avoids duplicates.
+        Archive the source playlist by copying new items into '{source_name}-Archive'.
+        Creates the archive playlist if it does not exist.
+        Optionally avoids duplicates.
         """
         logger.info("Fetching source playlist items...")
         source_items = self.accessor.fetch_playlist_tracks(action.source_playlist_id)
@@ -109,5 +111,6 @@ class PlaylistService:
         # Add tracks to archive playlist
         self.accessor.add_tracks_to_playlist(archive_playlist_id, tracks_to_add)
         logger.info(
-            f"Archived {len(tracks_to_add)} tracks to playlist '{archive_name}' (ID: {archive_playlist_id})"
+            f"Archived {len(tracks_to_add)} tracks to playlist '{archive_name}'"
+            + f"(ID: {archive_playlist_id})"
         )

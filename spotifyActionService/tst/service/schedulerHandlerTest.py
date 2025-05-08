@@ -62,7 +62,7 @@ def test_main_schedules_and_runs_once(monkeypatch: pytest.MonkeyPatch) -> None:
             self.interval = interval
             self.seconds = self
 
-        def do(self, func: Callable, arg) -> "FakeJob":
+        def do(self, func: Callable, arg: any) -> "FakeJob":
             calls.append((self.interval, func, arg))
             return self
 

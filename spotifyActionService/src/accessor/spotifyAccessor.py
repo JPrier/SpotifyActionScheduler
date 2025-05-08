@@ -15,7 +15,7 @@ class SpotifyAccessor:
         self,
         client: Spotify = spotify_client,
         user_id: str | None = None,
-    ):
+    ) -> None:
         self.client = client
         # If user_id not provided, fetch from the API
         if user_id:
@@ -35,7 +35,7 @@ class SpotifyAccessor:
 
     def fetch_playlist_tracks(self, playlist_id: str) -> list[dict[str, Any]]:
         """
-        Fetch all items from a Spotify playlist, including each item's 'added_at' timestamp.
+        Fetch all items from a Spotify playlist.
         Handles pagination automatically.
         """
         tracks: list[dict[str, Any]] = []
@@ -107,7 +107,8 @@ class SpotifyAccessor:
     ) -> str:
         try:
             logger.info(
-                f"Creating new playlist '{playlist_name}' (public={public}) for user {self.user_id}"
+                f"Creating new playlist '{playlist_name}' "
+                + f"(public={public}) for user {self.user_id}"
             )
             new = self.client.user_playlist_create(
                 user=self.user_id,

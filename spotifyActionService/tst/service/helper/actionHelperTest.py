@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
-from models.actions import ActionType, ArchiveAction, SyncAction
+from models.actions import Action, ActionType, ArchiveAction, SyncAction
 from service.helper.actionHelper import ACTION_MAP, ActionProcessor
 
 
@@ -86,10 +86,10 @@ def test_handle_action_dispatch() -> None:
     calls = []
 
     class DummyService:
-        def sync_playlists(self, action):
+        def sync_playlists(self, action: Action) -> None:
             calls.append(("sync", action))
 
-        def archive_playlists(self, action):
+        def archive_playlists(self, action: Action) -> None:
             calls.append(("archive", action))
 
     processor = ActionProcessor(playlist_service=DummyService())
@@ -112,10 +112,10 @@ def test_handle_action_default(monkeypatch: pytest.MonkeyPatch) -> None:
     calls = []
 
     class DummyService:
-        def sync_playlists(self, action):
+        def sync_playlists(self, action: Action) -> None:
             calls.append(("sync", action))
 
-        def archive_playlists(self, action):
+        def archive_playlists(self, action: Action) -> None:
             calls.append(("archive", action))
 
     processor = ActionProcessor(playlist_service=DummyService())

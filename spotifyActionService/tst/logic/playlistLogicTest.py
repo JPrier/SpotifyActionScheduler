@@ -24,10 +24,10 @@ def test_sync_playlists_no_new(
 
     # fake accessor just returns the same dummy_items for any playlist
     class DummyAccessor:
-        def fetch_playlist_tracks(self, pid: str):
+        def fetch_playlist_tracks(self, pid: str) -> list[dict[str, Any]]:
             return dummy_items
 
-        def add_tracks_to_playlist(self, pid: str, ids: list[str]):
+        def add_tracks_to_playlist(self, pid: str, ids: list[str]) -> None:
             calls.append((pid, ids))
 
     # patch the mapper that lives in logic.playlistLogic
@@ -62,10 +62,10 @@ def test_sync_playlists_adds_new_tracks(
     calls: list[Any] = []
 
     class DummyAccessor:
-        def fetch_playlist_tracks(self, pid: str):
+        def fetch_playlist_tracks(self, pid: str) -> list[dict[str, Any]]:
             return src_items if pid == action.source_playlist_id else tgt_items
 
-        def add_tracks_to_playlist(self, pid: str, ids: list[str]):
+        def add_tracks_to_playlist(self, pid: str, ids: list[str]) -> None:
             calls.append((pid, ids))
 
     # map_to_id_set returns 1,2,3 for source, and 2 for target
@@ -108,16 +108,16 @@ def test_archive_playlists_logs(
     dummy_items = [{"id": "x"}, {"id": "y"}]
 
     class DummyAccessor:
-        def fetch_playlist_tracks(self, pid: str):
+        def fetch_playlist_tracks(self, pid: str) -> list[dict[str, Any]]:
             return dummy_items
 
-        def get_playlist_metadata(self, pid: str):
+        def get_playlist_metadata(self, pid: str) -> dict[str, Any]:
             return {"name": "MyPlaylist"}
 
-        def get_or_create_playlist_with_name(self, name: str):
+        def get_or_create_playlist_with_name(self, name: str) -> str:
             return "archive_pl_id"
 
-        def add_tracks_to_playlist(self, pid: str, ids: list[str]):
+        def add_tracks_to_playlist(self, pid: str, ids: list[str]) -> None:
             # no-op for logging
             pass
 

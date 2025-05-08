@@ -5,7 +5,9 @@ from accessor.spotifyAccessor import SpotifyAccessor
 from dependency.spotifyClient import spotify_client
 
 
-def test_init_with_user_id_skips_fetch(monkeypatch, caplog):
+def test_init_with_user_id_skips_fetch(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.INFO)
     # If user_id is provided, client.current_user() should never be called
     monkeypatch.setattr(
@@ -19,7 +21,9 @@ def test_init_with_user_id_skips_fetch(monkeypatch, caplog):
     assert "Using provided user ID: u999" in caplog.text
 
 
-def test_get_current_user_id_success(monkeypatch, caplog):
+def test_get_current_user_id_success(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.INFO)
     # Stub out current_user() to return a known ID
     monkeypatch.setattr(spotify_client, "current_user", lambda: {"id": "u42"})
@@ -34,11 +38,13 @@ def test_get_current_user_id_success(monkeypatch, caplog):
     assert "Fetched current user ID: u42" in caplog.text
 
 
-def test_get_current_user_id_failure(monkeypatch, caplog):
+def test_get_current_user_id_failure(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.ERROR)
 
     # Simulate API failure
-    def bad_current_user():
+    def bad_current_user() -> None:
         raise RuntimeError("no auth")
 
     monkeypatch.setattr(spotify_client, "current_user", bad_current_user)
@@ -51,7 +57,9 @@ def test_get_current_user_id_failure(monkeypatch, caplog):
     assert "Failed to fetch current user ID: no auth" in caplog.text
 
 
-def test_get_playlist_id_by_name_found_on_first_page(monkeypatch, caplog):
+def test_get_playlist_id_by_name_found_on_first_page(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.INFO)
     # First page has the playlist
     page = {"items": [{"name": "MyList", "id": "p1"}], "next": None}
@@ -64,7 +72,9 @@ def test_get_playlist_id_by_name_found_on_first_page(monkeypatch, caplog):
     assert "Found playlist 'MyList' → p1" in caplog.text
 
 
-def test_get_playlist_id_by_name_found_on_second_page(monkeypatch):
+def test_get_playlist_id_by_name_found_on_second_page(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     page1 = {"items": [], "next": "url2"}
     page2 = {"items": [{"name": "Other", "id": "p2"}], "next": None}
 
@@ -77,7 +87,9 @@ def test_get_playlist_id_by_name_found_on_second_page(monkeypatch):
     assert pid == "p2"
 
 
-def test_get_playlist_id_by_name_not_found(monkeypatch, caplog):
+def test_get_playlist_id_by_name_not_found(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.INFO)
     # No items and no next
     monkeypatch.setattr(
@@ -93,7 +105,9 @@ def test_get_playlist_id_by_name_not_found(monkeypatch, caplog):
     assert "No playlist found with name 'Nothing'" in caplog.text
 
 
-def test_create_playlist_with_name_success(monkeypatch, caplog):
+def test_create_playlist_with_name_success(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.INFO)
     # Stub out user_playlist_create
     monkeypatch.setattr(
@@ -110,10 +124,12 @@ def test_create_playlist_with_name_success(monkeypatch, caplog):
     assert "Created playlist 'CoolList' → new123" in caplog.text
 
 
-def test_create_playlist_with_name_failure(monkeypatch, caplog):
+def test_create_playlist_with_name_failure(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.ERROR)
 
-    def bad_create(user, name, public):
+    def bad_create(user: str, name: str, public: bool) -> None:
         raise RuntimeError("quota")
 
     monkeypatch.setattr(spotify_client, "user_playlist_create", bad_create)
@@ -125,7 +141,9 @@ def test_create_playlist_with_name_failure(monkeypatch, caplog):
     assert "Failed to create playlist 'BadList': quota" in caplog.text
 
 
-def test_get_or_create_playlist_with_name_existing(monkeypatch, caplog):
+def test_get_or_create_playlist_with_name_existing(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.INFO)
     under_test = SpotifyAccessor(client=spotify_client, user_id="u123")
 
@@ -144,7 +162,9 @@ def test_get_or_create_playlist_with_name_existing(monkeypatch, caplog):
     assert "Playlist 'ExistList' already exists → exists123" in caplog.text
 
 
-def test_get_or_create_playlist_with_name_creates(monkeypatch, caplog):
+def test_get_or_create_playlist_with_name_creates(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
     caplog.set_level(logging.INFO)
     under_test = SpotifyAccessor(client=spotify_client, user_id="u123")
 

@@ -16,11 +16,11 @@ def test_main_invokes_parse_and_handle(
     calls: list[tuple[str, object]] = []
 
     # stub out the external methods on ActionProcessor
-    def fake_parse(self, path: str) -> list[str]:
+    def fake_parse(self: ActionProcessor, path: str) -> list[str]:
         calls.append(("parse", path))
         return actions
 
-    def fake_handle(self, actions_arg: list[str]) -> None:
+    def fake_handle(self: ActionProcessor, actions_arg: list[str]) -> None:
         calls.append(("handle", actions_arg))
 
     monkeypatch.setattr(

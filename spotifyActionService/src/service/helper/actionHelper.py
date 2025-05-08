@@ -9,7 +9,7 @@ class ActionProcessor:
     Encapsulates parsing and handling of action definitions.
     """
 
-    def __init__(self, playlist_service: PlaylistService):
+    def __init__(self, playlist_service: PlaylistService) -> None:
         self.playlist_service = playlist_service
 
     def parse_action_file(self, filepath: str) -> list[Action]:

@@ -2,6 +2,7 @@ import logging
 
 import pytest
 import service.onDemandHandler as under_test
+from accessor.spotifyAccessor import SpotifyAccessor
 from service.helper.actionHelper import ActionProcessor
 
 
@@ -32,6 +33,22 @@ def test_main_invokes_parse_and_handle(
         ActionProcessor,
         "handle_actions",
         fake_handle,
+    )
+
+    # stub SpotifyAccessor to bypass OAuth interaction
+    monkeypatch.setattr(
+        SpotifyAccessor, "get_current_user_id", lambda self: "test_user"
+    )
+
+    def fake_init(self: SpotifyAccessor) -> None:
+        # initialize minimal state without network or input
+        self.user_id = "test_user"
+        self.client = None
+
+    monkeypatch.setattr(
+        SpotifyAccessor,
+        "__init__",
+        fake_init,
     )
 
     # run main (this will use our monkeypatched methods)

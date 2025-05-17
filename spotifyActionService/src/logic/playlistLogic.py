@@ -21,8 +21,9 @@ class PlaylistService:
         """
         cutoff = datetime.now(UTC) - timedelta(seconds=time_in_seconds)
         logger.info(
-            f"Filtering tracks added after {cutoff.isoformat()} "
-            + f"(last {time_in_seconds} seconds)"
+            "Filtering tracks added after %s (last %s seconds)",
+            cutoff.isoformat(),
+            time_in_seconds,
         )
 
         filtered_items = [
@@ -30,7 +31,7 @@ class PlaylistService:
             for item in items
             if datetime.fromisoformat(item["added_at"].replace("Z", "+00:00")) > cutoff
         ]
-        logger.info(f"Filtered items: {filtered_items}")
+        logger.info("Filtered items: %s", filtered_items)
         return filtered_items
 
     def sync_playlists(self, action: SyncAction) -> None:
@@ -46,12 +47,16 @@ class PlaylistService:
         target_items = self.accessor.fetch_playlist_tracks(action.target_playlist_id)
         target_ids = map_to_id_set(target_items)
 
-        logger.info(f"Found {len(source_ids)} tracks in source playlist: {source_ids}")
-        logger.info(f"Found {len(target_ids)} tracks in target playlist: {target_ids}")
+        logger.info(
+            "Found %s tracks in source playlist: %s", len(source_ids), source_ids
+        )
+        logger.info(
+            "Found %s tracks in target playlist: %s", len(target_ids), target_ids
+        )
 
         # Determine which source tracks aren't in the target
         tracks_to_add = [tid for tid in source_ids if tid not in target_ids]
-        logger.info(f"Tracks to add: {tracks_to_add}")
+        logger.info("Tracks to add: %s", tracks_to_add)
 
         if not tracks_to_add:
             logger.info("No new tracks to add to target playlist.")
@@ -59,8 +64,9 @@ class PlaylistService:
 
         self.accessor.add_tracks_to_playlist(action.target_playlist_id, tracks_to_add)
         logger.info(
-            f"Added {len(tracks_to_add)} tracks to target playlist: "
-            + f"{action.target_playlist_id}"
+            "Added %s tracks to target playlist: %s",
+            len(tracks_to_add),
+            action.target_playlist_id,
         )
 
     def archive_playlists(self, action: ArchiveAction) -> None:
@@ -72,21 +78,23 @@ class PlaylistService:
         logger.info("Fetching source playlist items...")
         source_items = self.accessor.fetch_playlist_tracks(action.source_playlist_id)
 
-        if getattr(action, "filterByTime", True):
+        if getattr(action, "filter_by_time", True):
             logger.info("Filtering source playlist items by time...")
             source_items = self.filter_items_after_time(
                 source_items, action.timeBetweenActInSeconds
             )
 
         source_ids = map_to_id_set(source_items)
-        logger.info(f"Found {len(source_ids)} tracks in source playlist: {source_ids}")
+        logger.info(
+            "Found %s tracks in source playlist: %s", len(source_ids), source_ids
+        )
 
         # Determine archive playlist name and ensure it exists
         source_name = self.accessor.get_playlist_metadata(action.source_playlist_id)[
             "name"
         ]
         archive_name = f"{source_name}-Archive"
-        logger.info(f"Using archive playlist name: '{archive_name}'")
+        logger.info("Using archive playlist name: '%s'", archive_name)
         archive_playlist_id = self.accessor.get_or_create_playlist_with_name(
             archive_name
         )
@@ -99,10 +107,10 @@ class PlaylistService:
             existing_items = self.accessor.fetch_playlist_tracks(archive_playlist_id)
             existing_ids = map_to_id_set(existing_items)
             tracks_to_add = [tid for tid in source_ids if tid not in existing_ids]
-            logger.info(f"Tracks to add after duplicate check: {tracks_to_add}")
+            logger.info("Tracks to add after duplicate check: %s", tracks_to_add)
         else:
             tracks_to_add = list(source_ids)
-            logger.info(f"Adding all tracks without duplicate check: {tracks_to_add}")
+            logger.info("Adding all tracks without duplicate check: %s", tracks_to_add)
 
         if not tracks_to_add:
             logger.info("No new tracks to archive.")
@@ -111,6 +119,8 @@ class PlaylistService:
         # Add tracks to archive playlist
         self.accessor.add_tracks_to_playlist(archive_playlist_id, tracks_to_add)
         logger.info(
-            f"Archived {len(tracks_to_add)} tracks to playlist '{archive_name}'"
-            + f"(ID: {archive_playlist_id})"
+            "Archived %s tracks to playlist '%s' (ID: %s)",
+            len(tracks_to_add),
+            archive_name,
+            archive_playlist_id,
         )

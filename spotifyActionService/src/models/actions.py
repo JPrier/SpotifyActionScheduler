@@ -27,6 +27,7 @@ class ArchiveAction(Action):
     source_playlist_id: str
     target_playlist_id: str | None
     avoid_duplicates: bool = True
+    filter_by_time: bool = True
 
 
 # Map each enum to its dataclass

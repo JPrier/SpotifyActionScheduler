@@ -4,6 +4,7 @@ from collections.abc import Callable
 import pytest
 import schedule
 import service.schedulerHandler as under_test
+from accessor.spotifyAccessor import SpotifyAccessor
 from models.actions import Action
 from service.schedulerHandler import (
     SLEEP_TIME_IN_SECONDS,
@@ -43,6 +44,21 @@ def test_schedule_action_creates_job(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_main_schedules_and_runs_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    # 0) stub SpotifyAccessor to bypass OAuth interaction
+    monkeypatch.setattr(
+        SpotifyAccessor, "get_current_user_id", lambda self: "test_user"
+    )
+
+    def fake_init(self: SpotifyAccessor) -> None:
+        self.user_id = "test_user"
+        self.client = None
+
+    monkeypatch.setattr(
+        SpotifyAccessor,
+        "__init__",
+        fake_init,
+    )
+
     # 1) stub external ActionProcessor.parse_action_file
     actions = [
         Action(type=None, timeBetweenActInSeconds=3),

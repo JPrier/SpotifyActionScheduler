@@ -18,4 +18,4 @@ test:
     uv run --frozen coverage html || true
     uv run --frozen coverage report
 
-build: deps lint format test
+build: deps format lint test

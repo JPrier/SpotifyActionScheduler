@@ -1,7 +1,7 @@
 # SpotifyActionScheduler
 
 [![CI](https://github.com/JPrier/SpotifyActionScheduler/actions/workflows/ci.yml/badge.svg)](https://github.com/JPrier/SpotifyActionScheduler/actions)
-[![PyPI Version](https://img.shields.io/pypi/v/spotifyactionscheduler?color=brightgreen)](https://pypi.org/project/spotify-actions)
+[![PyPI Version](https://img.shields.io/pypi/v/spotify-actions?color=brightgreen)](https://pypi.org/project/spotify-actions)
 [![Docker Image](https://img.shields.io/docker/pulls/jprier/spotifyactionscheduler?logo=docker\&label=Docker%20image)](https://hub.docker.com/r/jprier/spotifyactionscheduler)
 [![License](https://img.shields.io/github/license/JPrier/SpotifyActionScheduler)](./LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/JPrier/SpotifyActionScheduler)](https://github.com/JPrier/SpotifyActionScheduler/commits/master)

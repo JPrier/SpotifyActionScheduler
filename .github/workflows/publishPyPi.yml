@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/spotifyActionScheduler
+      url: https://pypi.org/p/spotify-actions
     permissions:
       id-token: write
     steps:

@@ -3,11 +3,24 @@ name               = "spotify-actions"
 version            = "0.1.0"
 requires-python    = ">=3.13"
 description        = "Schedule Actions on Spotify"
+readme             = "README.md"
+license            = { file = "LICENSE" }
+authors            = [ { name="Joshua Prier" } ]
 dependencies       = [
     "python-dotenv>=1.0.0",
     "spotipy>=2.0.0",
     "schedule>=1.0.0"
 ]
+classifiers        = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.13",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage   = "https://github.com/JPrier/SpotifyActionScheduler"
+Repository = "https://github.com/JPrier/SpotifyActionScheduler"
 
 [build-system]
 requires           = ["setuptools>=61.0","wheel"]
@@ -17,8 +30,8 @@ build-backend      = "setuptools.build_meta"
 "" = "spotifyActionService/src"
 
 [tool.setuptools.packages.find]
-where              = ["spotifyActionService"]
-include            = ["src*"]
+where              = ["spotifyActionService/src"]
+include            = ["*"]
 
 [tool.ruff]
 line-length        = 88
@@ -34,13 +47,12 @@ python_files       = ["*Test.py"]
 [tool.uv.sources]
 spotify-actions = { workspace = true }
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
   "coverage>=7.8.0",
   "just>=0.8.162",
   "pytest>=8.3.5",
   "pytest-cov>=6.1.1",
   "ruff>=0.11.8",
-  "spotify-actions",
   "typing-extensions>=4.13.2",
 ]

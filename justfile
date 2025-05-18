@@ -12,10 +12,9 @@ format:
 
 test:
     PYTHONPATH=$PWD/spotifyActionService/src \
-        uv run --frozen \
-        coverage run --source=$PWD/spotifyActionService/src -m \
-        pytest
-    uv run --frozen coverage html || true
-    uv run --frozen coverage report
+      uv run --extra dev \
+        python -m coverage run --source=$PWD/spotifyActionService/src -m pytest
+    uv run --extra dev coverage html || true
+    uv run --extra dev coverage report
 
 build: deps format lint test

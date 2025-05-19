@@ -1,6 +1,5 @@
 from typing import Any
 
-from dependency.spotifyClient import spotify_client
 from spotipy import Spotify
 from util.logger import logger
 
@@ -13,7 +12,7 @@ class SpotifyAccessor:
 
     def __init__(
         self,
-        client: Spotify = spotify_client,
+        client: Spotify,
         user_id: str | None = None,
     ) -> None:
         self.client = client

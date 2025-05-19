@@ -6,8 +6,10 @@ description        = "Schedule Actions on Spotify"
 dependencies       = [
     "python-dotenv>=1.0.0",
     "spotipy>=2.0.0",
-    "schedule>=1.0.0"
+    "schedule>=1.0.0",
+    "click>=8.0"
 ]
+scripts = { "spotify-actions" = "spotify_actions.cli:cli" }
 
 [build-system]
 requires           = ["setuptools>=61.0","wheel"]

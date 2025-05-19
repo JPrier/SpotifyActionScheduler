@@ -11,6 +11,7 @@ from service.schedulerHandler import (
     main,
     schedule_action,
 )
+from spotipy import Spotify
 
 
 class DummyProcessor:
@@ -49,7 +50,7 @@ def test_main_schedules_and_runs_once(monkeypatch: pytest.MonkeyPatch) -> None:
         SpotifyAccessor, "get_current_user_id", lambda self: "test_user"
     )
 
-    def fake_init(self: SpotifyAccessor) -> None:
+    def fake_init(self: SpotifyAccessor, client: Spotify) -> None:
         self.user_id = "test_user"
         self.client = None
 

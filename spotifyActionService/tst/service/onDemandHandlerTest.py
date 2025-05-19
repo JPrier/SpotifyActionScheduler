@@ -4,6 +4,7 @@ import pytest
 import service.onDemandHandler as under_test
 from accessor.spotifyAccessor import SpotifyAccessor
 from service.helper.actionHelper import ActionProcessor
+from spotipy import Spotify
 
 
 def test_main_invokes_parse_and_handle(
@@ -40,7 +41,7 @@ def test_main_invokes_parse_and_handle(
         SpotifyAccessor, "get_current_user_id", lambda self: "test_user"
     )
 
-    def fake_init(self: SpotifyAccessor) -> None:
+    def fake_init(self: SpotifyAccessor, client: Spotify) -> None:
         # initialize minimal state without network or input
         self.user_id = "test_user"
         self.client = None

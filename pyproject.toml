@@ -1,6 +1,6 @@
 [project]
 name               = "spotify-actions"
-version            = "0.1.1"
+version            = "0.1.3"
 requires-python    = ">=3.13"
 description        = "Schedule Actions on Spotify"
 readme             = "README.md"
@@ -24,7 +24,7 @@ Homepage           = "https://github.com/JPrier/SpotifyActionScheduler"
 Repository         = "https://github.com/JPrier/SpotifyActionScheduler"
 
 [project.scripts]
-spotify-actions = "spotify_actions.cli:cli"
+spotify-actions = "service.cli:cli"
 
 [build-system]
 requires           = ["setuptools>=61.0","wheel"]

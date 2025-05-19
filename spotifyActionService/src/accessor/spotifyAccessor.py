@@ -13,7 +13,7 @@ class SpotifyAccessor:
 
     def __init__(
         self,
-        client: Spotify = spotify_client,
+        client: Spotify,
         user_id: str | None = None,
     ) -> None:
         self.client = client

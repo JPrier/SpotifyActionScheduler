@@ -9,7 +9,8 @@ authors            = [ { name="Joshua Prier" } ]
 dependencies       = [
     "python-dotenv>=1.0.0",
     "spotipy>=2.0.0",
-    "schedule>=1.0.0"
+    "schedule>=1.0.0",
+    "click>=8.0"
 ]
 classifiers        = [
   "Programming Language :: Python :: 3",
@@ -19,8 +20,9 @@ classifiers        = [
 ]
 
 [project.urls]
-Homepage   = "https://github.com/JPrier/SpotifyActionScheduler"
-Repository = "https://github.com/JPrier/SpotifyActionScheduler"
+Homepage           = "https://github.com/JPrier/SpotifyActionScheduler"
+Repository         = "https://github.com/JPrier/SpotifyActionScheduler"
+scripts            = { "spotify-actions" = "spotify_actions.cli:cli" }
 
 [build-system]
 requires           = ["setuptools>=61.0","wheel"]

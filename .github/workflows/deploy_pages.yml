@@ -34,17 +34,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install pyodide-build & setup Emscripten
+      - name: Install pyodide-build
         run: |
           pip install pyodide-build
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd emsdk
-          git pull
-          ./emsdk update-tags
-          ./emsdk install latest
-          ./emsdk activate latest
-          source ./emsdk_env.sh
-          cd ..
+          echo "EMSCRIPTEN_VERSION=$(pyodide config get emscripten_version)" >> $GITHUB_ENV
+
+      - name: Install Emscripten SDK
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSCRIPTEN_VERSION }}
 
       - name: Build Pyodide wheel
         run: |

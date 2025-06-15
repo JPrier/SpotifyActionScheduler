@@ -19,16 +19,17 @@
   <div id="output">—</div>
 
   <script type="module">
+    import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.30.5/full/pyodide.js";
+
+    const pyodide = await loadPyodide({
+        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.30.5/full/",
+    });
     const btn   = document.getElementById("validateBtn");
     const edit  = document.getElementById("editor");
     const out   = document.getElementById("output");
     btn.disabled = true;
 
     async function boot() {
-        const pyodide = await loadPyodide({
-            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.30.5/full/"
-        });
-
         await pyodide.runPythonAsync(`
             import micropip
             await micropip.install("./spotify_action_validator-0.1-py3-none-any_emscripten_*.whl")

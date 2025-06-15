@@ -25,7 +25,7 @@
 import micropip
 await micropip.install("./spotify_action_validator-0.1-py3-none-any_emscripten_*.whl")
 `);
-      window.validate = pyodide.runPython;
+      window.validate = (code) => pyodide.runPythonAsync(code);
       console.log("✅ Pyodide & validator package loaded");
     }
 

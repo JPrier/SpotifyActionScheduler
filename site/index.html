@@ -18,33 +18,45 @@
   <h3>Result:</h3>
   <div id="output">—</div>
 
-  <script>
-    async function loadEverything() {
-      const pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.30.5/full/" });
-      await pyodide.runPythonAsync(`
-import micropip
-await micropip.install("./spotify_action_validator-0.1-py3-none-any_emscripten_*.whl")
-`);
-      window.validate = (code) => pyodide.runPythonAsync(code);
-      console.log("✅ Pyodide & validator package loaded");
+  <script type="module">
+    const btn   = document.getElementById("validateBtn");
+    const edit  = document.getElementById("editor");
+    const out   = document.getElementById("output");
+    btn.disabled = true;
+
+    async function boot() {
+        const pyodide = await loadPyodide({
+            indexURL: "https://cdn.jsdelivr.net/pyodide/v0.30.5/full/"
+        });
+
+        await pyodide.runPythonAsync(`
+            import micropip
+            await micropip.install("./spotify_action_validator-0.1-py3-none-any_emscripten_*.whl")
+            from actionValidator import validate_data
+            print("✅ Action Validator loaded")
+        `);
+
+        // expose helper
+        window.validate = code => pyodide.runPythonAsync(code);
+        btn.disabled = false;
+        console.log("✅ Ready");
     }
+    boot();
 
-    loadEverything();
-
-    document.getElementById("validateBtn").onclick = async () => {
-      const inputText = document.getElementById("editor").value;
-      try {
+    btn.onclick = async () => {
+        try {
         const result = await window.validate(`
-import json
-from actionValidator import validate_data
-data = json.loads(${JSON.stringify(inputText)})
-print(validate_data(data))
-`);
-        document.getElementById("output").innerText = result;
-      } catch (err) {
-        document.getElementById("output").innerText = err;
-      }
+            import json
+            from actionValidator import validate_data
+            data = json.loads(${JSON.stringify(edit.value)})
+            print(validate_data(data))
+        `);
+        out.textContent = result;
+        } catch (err) {
+        out.textContent = err;
+        }
     };
-  </script>
+    </script>
+
 </body>
 </html>

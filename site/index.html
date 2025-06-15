@@ -24,6 +24,7 @@
 
     const pyodide = await loadPyodide({
         indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/",
+        packages: ["micropip"]
     });
     const btn   = document.getElementById("validateBtn");
     const edit  = document.getElementById("editor");

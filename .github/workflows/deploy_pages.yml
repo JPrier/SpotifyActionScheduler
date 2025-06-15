@@ -1,3 +1,4 @@
+# .github/workflows/deploy-validator.yml
 name: Deploy Validator Site
 
 on:
@@ -6,6 +7,7 @@ on:
     paths:
       - 'docs/validator/**'
       - 'spotifyActionService/src/logic/**'
+      - 'site/**'
   workflow_dispatch:
 
 permissions:
@@ -18,58 +20,50 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    outputs:
-      artifact-path: ${{ steps.upload.outputs.artifact_id }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install required tools
+      - name: Install pyodide-build & setup Emscripten
         run: |
           pip install pyodide-build
-          EMSDK_VER=$(pyodide config get emscripten_version)
-          echo "EMSDK_VER=$EMSDK_VER" >> $GITHUB_ENV
-          curl -sL https://emscripten.sdk/releases/${EMSDK_VER}/emsdk-${EMSDK_VER}-linux.tar.gz | tar -xz
-          source emsdk-${EMSDK_VER}/emsdk_env.sh
-          ./emsdk-${EMSDK_VER}/emsdk install ${EMSDK_VER}
-          ./emsdk-${EMSDK_VER}/emsdk activate ${EMSDK_VER}
-          source emsdk-${EMSDK_VER}/emsdk_env.sh
+          echo "EMSDK_VER=$(pyodide config get emscripten_version)" >> $GITHUB_ENV
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install "${EMSDK_VER}"
+          ./emsdk activate "${EMSDK_VER}"
+          source emsdk_env.sh
+          cd ..
 
       - name: Build Pyodide wheel
         run: |
           cd spotifyActionService/src/logic
           pyodide build
+          mkdir -p ../../../docs/validator
           cp dist/*.whl ../../../docs/validator/
 
-      - name: Prepare static site & copy wheel
+      - name: Copy website assets
         run: |
-          mkdir -p docs/validator
-          # ensure index.html is there with correct content
+          cp -r docs/validator/* docs/validator/
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        id: upload
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/validator/
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Download built artifact
-        uses: actions/download-pages-artifact@v3
-        with:
-          artifact_id: ${{ needs.build.outputs.artifact-path }}
+          path: docs/validator
 
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: deploy
         uses: actions/deploy-pages@v4

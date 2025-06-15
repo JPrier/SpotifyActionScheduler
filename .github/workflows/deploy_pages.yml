@@ -39,7 +39,8 @@ jobs:
           pip install pyodide-build
           git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
-          ./emsdk update
+          git pull
+          ./emsdk update-tags
           ./emsdk install latest
           ./emsdk activate latest
           source ./emsdk_env.sh

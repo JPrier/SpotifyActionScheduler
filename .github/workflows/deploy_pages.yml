@@ -51,10 +51,6 @@ jobs:
           mkdir -p ../../../docs/validator
           cp dist/*.whl ../../../docs/validator/
 
-      - name: Copy website assets
-        run: |
-          cp -r docs/validator/* docs/validator/
-
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

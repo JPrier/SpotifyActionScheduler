@@ -31,11 +31,13 @@ jobs:
         with: { python-version: "3.11" }
       - run: pip install build
       - run: python -m build --wheel
+      - run: |
+          mkdir public
+          cp -r site/* public/
+          cp -r dist public/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: |
-            site
-            dist 
+          path: public
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

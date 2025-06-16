@@ -26,43 +26,16 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install pyodide-build
-        run: |
-          pip install pyodide-build==0.27.7
-          echo "EMSCRIPTEN_VERSION=$(pyodide config get emscripten_version)" >> $GITHUB_ENV
-
-      - name: Install Emscripten SDK
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: ${{ env.EMSCRIPTEN_VERSION }}
-          cache: true
-
-      - name: Build Pyodide wheel
-        run: |
-          cd spotifyActionService/src/logic
-          pyodide build -v
-          mkdir -p ../../../docs/validator
-          cp dist/*.whl ../../../docs/validator/
-
-      - name: Copy website assets
-        run: |
-          cp -r site/* docs/validator/
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install build
+      - run: python -m build --wheel
+      - uses: actions/upload-artifact@v4
+        with: { path: dist/*.whl }
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/validator
 
       - name: Deploy to GitHub Pages
         id: deploy

@@ -63,7 +63,7 @@ def validate_data(data: dict) -> int:
     return 0
 
 
-if __name__ == "__main__":  # pragma: no cover
+def main() -> None:  # pragma: no cover
     if len(sys.argv) != 2:
         print("Usage: validate_actions.py <path/to/actions.json>", file=sys.stderr)
         sys.exit(1)

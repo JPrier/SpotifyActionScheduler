@@ -35,6 +35,12 @@
         await pyodide.runPythonAsync(`
             import micropip
             await micropip.install("dist/spotify_actions-0.1.3-py3-none-any.whl")
+            import zipfile, pathlib, sys, pprint, textwrap, importlib.util
+            wheel = pathlib.Path("dist/spotify_actions-0.1.3-py3-none-any.whl")
+            with zipfile.ZipFile(wheel) as zf:
+                top = {p.split("/")[0] for p in zf.namelist() if "/" in p}
+            print("Top-level entries in wheel:", top)
+
             from spotify_actions import actionValidator
             print("✅ Action Validator loaded")
         `);

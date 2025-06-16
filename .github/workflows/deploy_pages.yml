@@ -31,12 +31,11 @@ jobs:
         with: { python-version: "3.11" }
       - run: pip install build
       - run: python -m build --wheel
-      - uses: actions/upload-artifact@v4
-        with: 
-          name: dist-wheels
-          path: dist/*.whl
       - uses: actions/upload-pages-artifact@v3
-        with: { path: site }
+        with:
+          path: |
+            site
+            dist 
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

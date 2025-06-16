@@ -36,18 +36,19 @@ jobs:
 
       - name: Install pyodide-build
         run: |
-          pip install pyodide-build
+          pip install pyodide-build==0.27.7
           echo "EMSCRIPTEN_VERSION=$(pyodide config get emscripten_version)" >> $GITHUB_ENV
 
       - name: Install Emscripten SDK
         uses: mymindstorm/setup-emsdk@v14
         with:
           version: ${{ env.EMSCRIPTEN_VERSION }}
+          cache: true
 
       - name: Build Pyodide wheel
         run: |
           cd spotifyActionService/src/logic
-          pyodide build
+          pyodide build -v
           mkdir -p ../../../docs/validator
           cp dist/*.whl ../../../docs/validator/
 

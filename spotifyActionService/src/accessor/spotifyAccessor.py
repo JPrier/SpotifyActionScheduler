@@ -1,6 +1,5 @@
 from typing import Any
 
-from dependency.spotifyClient import spotify_client
 from spotipy import Spotify
 from util.logger import logger
 

@@ -60,6 +60,9 @@ def test_main_schedules_and_runs_once(monkeypatch: pytest.MonkeyPatch) -> None:
         fake_init,
     )
 
+    # stub get_client to avoid real OAuth setup
+    monkeypatch.setattr(under_test.spotifyClient, "get_client", lambda: None)
+
     # 1) stub external ActionProcessor.parse_action_file
     actions = [
         Action(type=None, timeBetweenActInSeconds=3),

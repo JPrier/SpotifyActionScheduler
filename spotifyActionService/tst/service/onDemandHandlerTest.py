@@ -52,6 +52,9 @@ def test_main_invokes_parse_and_handle(
         fake_init,
     )
 
+    # stub get_client to avoid real OAuth setup
+    monkeypatch.setattr(under_test.spotifyClient, "get_client", lambda: None)
+
     # run main (this will use our monkeypatched methods)
     under_test.main()
 

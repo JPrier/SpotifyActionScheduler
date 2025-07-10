@@ -4,6 +4,7 @@ from typing import Any
 import pytest
 from accessor.spotifyAccessor import SpotifyAccessor
 
+
 @pytest.fixture
 def dummy_client() -> object:
     """

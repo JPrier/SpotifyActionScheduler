@@ -29,7 +29,7 @@ jobs:
 
   integration-tests:
     needs: build
-    if: github.ref == 'refs/heads/main' || github.actor == 'JPrier'
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.actor == 'JPrier')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

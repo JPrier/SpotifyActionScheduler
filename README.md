@@ -208,6 +208,7 @@ Contributions are welcome! If you have an idea for improvement or found a bug, f
 * **Project Setup:** For development, install the package in editable mode as described above. It’s recommended to also install any dev dependencies (if provided, e.g. via a `requirements-dev.txt` or Poetry extras). This project uses a `justfile` for common tasks – if you have [just](https://github.com/casey/just) installed, you can run tasks like `just format` or `just test` if defined.
 * **Coding Style:** The code is linted with **Flake8** in CI. Please run `flake8` (or `just lint`) to catch styling issues before committing.
 * **Testing:** Ensure that you run **pytest** and that all tests pass. If you add new features, add corresponding unit tests. The CI pipeline will run the test suite on each pull request.
+* **Integration tests:** Real Spotify API tests live under `spotifyActionService/tst/integration`. They are skipped by default; run them explicitly with `pytest -m integration`. In CI these tests run only on merges to `main` or when manually triggered by the repo owner.
 * **Commit Messages:** Follow clear and descriptive commit messages. If your PR addresses an open issue, please reference it in the description.
 * **Branching Workflow:** It’s generally recommended to create a new branch for your feature or fix (don’t commit to `master` on your fork) and then open a PR from that branch.
 

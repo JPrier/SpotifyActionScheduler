@@ -35,13 +35,13 @@ jobs:
 
       - name: Install pyodide-build & setup Emscripten
         run: |
-          pip install pyodide-build
-          EMSDK_VER=4.0.9
+          pip install pyodide-build==0.30.5
+          EMSDK_VER=3.1.46
           echo "EMSDK_VER=$EMSDK_VER" >> "$GITHUB_ENV"
           git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
-          ./emsdk install 4.0.9
-          ./emsdk activate 4.0.9
+          ./emsdk install $EMSDK_VER
+          ./emsdk activate $EMSDK_VER
           source emsdk_env.sh
           cd ..
 

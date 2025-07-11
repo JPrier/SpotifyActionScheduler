@@ -5,6 +5,7 @@ import os
 import pytest
 from accessor.spotifyAccessor import SpotifyAccessor
 from dependency.spotifyClient import get_client
+from spotipy.exceptions import SpotifyOauthError
 
 
 @pytest.mark.integration
@@ -20,7 +21,10 @@ def test_can_fetch_current_user() -> None:
     if not cache_exists and not has_refresh:
         pytest.fail("Spotify auth token not available")
 
-    client = get_client()
-    accessor = SpotifyAccessor(client)
+    try:
+        client = get_client()
+        accessor = SpotifyAccessor(client)
+    except (SpotifyOauthError, EnvironmentError) as exc:
+        pytest.fail(f"Spotify auth failed: {exc}")
 
     assert accessor.user_id is not None

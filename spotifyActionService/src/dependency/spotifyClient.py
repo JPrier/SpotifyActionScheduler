@@ -1,3 +1,5 @@
+import os
+
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from util.env import get_environ
@@ -12,4 +14,9 @@ def get_client() -> Spotify:
         redirect_uri=get_environ("SPOTIPY_REDIRECT_URI"),
         scope=scope,
     )
+
+    refresh_token = get_environ("SPOTIPY_REFRESH_TOKEN")
+    if refresh_token and not os.path.exists(".cache"):
+        auth_manager.refresh_access_token(refresh_token)
+
     return Spotify(auth_manager=auth_manager)

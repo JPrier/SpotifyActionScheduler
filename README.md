@@ -100,6 +100,8 @@ SPOTIPY_REFRESH_TOKEN=<your_refresh_token>
 
 When you run the scheduler for the first time, it will use these credentials to open a Spotify authorization page in your browser. **Log in and authorize** the application. After authorization, the app will receive an access token (and refresh token) for your account. The token will be saved locally (by default Spotipy stores it in a `.cache` file in the working directory). On subsequent runs, it will reuse the cached token so you won’t need to re-authenticate each time.
 
+If you provide a `SPOTIPY_REFRESH_TOKEN` environment variable and the `.cache` file hasn't been created yet, the client will refresh the token automatically. This allows CI pipelines or integration tests to authenticate without opening a browser.
+
 ### 2. Defining Sync Actions (actions.json)
 
 Next, tell the scheduler what you want to sync. This is done by creating an **actions JSON configuration** (by default, the app looks for a file named `actions.json`). You can start by copying the provided template from the repository (`spotifyActionService/actions.json.template`) and filling in your details. The configuration is a JSON array of action objects. Each action can specify:

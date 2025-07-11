@@ -4,6 +4,7 @@ on:
   push:
     branches: [ master, main ]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,9 +15,6 @@ jobs:
 
       - name: Setup Environment
         env:
-          SPOTIFY_CLIENT_ID:    ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
           GPG_PASSPHRASE:       ${{ secrets.GPG_PASSPHRASE }}
         run: bash scripts/setup.sh
 
@@ -28,3 +26,26 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/spotifyActionService/src
         run: |
           python spotifyActionService/src/logic/actionValidator.py spotifyActionService/actions.json
+
+  integration-tests:
+    needs: build
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.actor == 'JPrier')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        env:
+          SPOTIFY_CLIENT_ID:    ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI }}
+          SPOTIPY_REFRESH_TOKEN: ${{ secrets.SPOTIPY_REFRESH_TOKEN }}
+          GPG_PASSPHRASE:       ${{ secrets.GPG_PASSPHRASE }}
+        run: bash scripts/setup.sh
+
+      - name: Run Integration Tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/spotifyActionService/src
+        run: |
+          uv run --extra dev pytest -m integration

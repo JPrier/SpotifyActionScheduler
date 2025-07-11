@@ -47,6 +47,8 @@ fix-only           = false
 minversion         = "6.0"
 testpaths          = ["spotifyActionService/tst"]
 python_files       = ["*Test.py"]
+addopts           = "-m 'not integration'"
+markers           = ["integration: tests that hit the real Spotify API"]
 
 [tool.uv.sources]
 spotify-actions = { workspace = true }

@@ -85,6 +85,7 @@ You need to supply your Spotify API credentials via environment variables. The a
 * `SPOTIPY_CLIENT_ID` – Your Spotify Client ID
 * `SPOTIPY_CLIENT_SECRET` – Your Spotify Client Secret
 * `SPOTIPY_REDIRECT_URI` – The Redirect URI you set for your Spotify app
+* `SPOTIPY_REFRESH_TOKEN` – *(Optional)* A stored refresh token used for non-interactive authentication
 
 Create a file named **`.env`** (or any way to set env vars in your environment) and add your credentials:
 
@@ -92,6 +93,7 @@ Create a file named **`.env`** (or any way to set env vars in your environment) 
 SPOTIPY_CLIENT_ID=<your_spotify_client_id>
 SPOTIPY_CLIENT_SECRET=<your_spotify_client_secret>
 SPOTIPY_REDIRECT_URI=<your_redirect_uri>
+SPOTIPY_REFRESH_TOKEN=<your_refresh_token>
 ```
 
 > **Note:** The Redirect URI should match one of the allowed callback URLs in your Spotify developer app settings. If you don’t have a Spotify application yet, go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) to create an app and get these credentials. You can use a placeholder redirect URI such as `http://localhost:8888/callback` (and add it in your app settings) for the authorization flow.

@@ -24,7 +24,7 @@ def test_can_fetch_current_user() -> None:
     try:
         client = get_client()
         accessor = SpotifyAccessor(client)
-    except (SpotifyOauthError, EnvironmentError) as exc:
+    except (OSError, SpotifyOauthError) as exc:
         pytest.fail(f"Spotify auth failed: {exc}")
 
     assert accessor.user_id is not None

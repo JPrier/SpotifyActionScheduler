@@ -19,9 +19,9 @@ class DummySpotify:
 
 def test_refresh_token_used_when_cache_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     # set required env vars
-    monkeypatch.setenv("SPOTIPY_CLIENT_ID", "cid")
-    monkeypatch.setenv("SPOTIPY_CLIENT_SECRET", "secret")
-    monkeypatch.setenv("SPOTIPY_REDIRECT_URI", "uri")
+    monkeypatch.setenv("SPOTIFY_CLIENT_ID", "cid")
+    monkeypatch.setenv("SPOTIFY_CLIENT_SECRET", "secret")
+    monkeypatch.setenv("SPOTIFY_REDIRECT_URI", "uri")
     monkeypatch.setenv("SPOTIPY_REFRESH_TOKEN", "refresh")
 
     dummy = DummyOAuth()

@@ -45,11 +45,14 @@ set +a
 # ----------- CI-ONLY: write spotify.env from secrets -----------
 if [[ -n "${GITHUB_ACTIONS-}" ]]; then
   cat > spotifyActionService/spotify.env <<EOF
-SPOTIPY_CLIENT_ID=${SPOTIFY_CLIENT_ID:-}
-SPOTIPY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET:-}
-SPOTIPY_REDIRECT_URI=${SPOTIFY_REDIRECT_URI:-}
+SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID:-}
+SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET:-}
+SPOTIFY_REDIRECT_URI=${SPOTIFY_REDIRECT_URI:-}
 SPOTIPY_REFRESH_TOKEN=${SPOTIPY_REFRESH_TOKEN:-}
 EOF
+
+  # Export credentials for subsequent steps
+  cat spotifyActionService/spotify.env >> "$GITHUB_ENV"
 
   # Decrypt actions.json if encrypted
   if [[ -f spotifyActionService/actions.json.gpg ]]; then

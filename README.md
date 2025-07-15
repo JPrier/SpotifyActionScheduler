@@ -82,17 +82,17 @@ Before running SpotifyActionScheduler, you need to provide two pieces of configu
 
 You need to supply your Spotify API credentials via environment variables. The application uses the following **environment variables** (in line with [Spotipy’s](https://spotipy.readthedocs.io/en/latest/#authorized-requests) conventions):
 
-* `SPOTIPY_CLIENT_ID` – Your Spotify Client ID
-* `SPOTIPY_CLIENT_SECRET` – Your Spotify Client Secret
-* `SPOTIPY_REDIRECT_URI` – The Redirect URI you set for your Spotify app
+* `SPOTIFY_CLIENT_ID` – Your Spotify Client ID
+* `SPOTIFY_CLIENT_SECRET` – Your Spotify Client Secret
+* `SPOTIFY_REDIRECT_URI` – The Redirect URI you set for your Spotify app
 * `SPOTIPY_REFRESH_TOKEN` – *(Optional)* A stored refresh token used for non-interactive authentication
 
 Create a file named **`.env`** (or any way to set env vars in your environment) and add your credentials:
 
 ```ini
-SPOTIPY_CLIENT_ID=<your_spotify_client_id>
-SPOTIPY_CLIENT_SECRET=<your_spotify_client_secret>
-SPOTIPY_REDIRECT_URI=<your_redirect_uri>
+SPOTIFY_CLIENT_ID=<your_spotify_client_id>
+SPOTIFY_CLIENT_SECRET=<your_spotify_client_secret>
+SPOTIFY_REDIRECT_URI=<your_redirect_uri>
 SPOTIPY_REFRESH_TOKEN=<your_refresh_token>
 ```
 

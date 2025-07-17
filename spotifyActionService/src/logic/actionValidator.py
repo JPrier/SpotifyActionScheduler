@@ -4,6 +4,10 @@ import sys
 from accessor.configLoader import load_json_file
 from models.actions import ACTION_MAP, ActionType
 
+# Return codes used throughout the application
+VALIDATION_SUCCESS = 0
+VALIDATION_FAILED = 1
+
 
 def validate(filepath: str) -> int:
     # 1) Load the JSON (reports parse errors)
@@ -11,7 +15,7 @@ def validate(filepath: str) -> int:
         data = load_json_file(filepath)
     except Exception as e:
         print(f"[ERROR] Unable to load JSON: {e}", file=sys.stderr)
-        return 1
+        return VALIDATION_FAILED
     
     return validate_data(data)
     
@@ -19,7 +23,7 @@ def validate_data(data: dict) -> int:
     # Ensure top-level "actions" is present and is a list
     if "actions" not in data or not isinstance(data["actions"], list):
         print("[ERROR] Top-level 'actions' key missing or not a list.", file=sys.stderr)
-        return 1
+        return VALIDATION_FAILED
 
     errors: list[str] = []
     for idx, raw in enumerate(data["actions"]):
@@ -57,10 +61,10 @@ def validate_data(data: dict) -> int:
         print("[VALIDATION FAILED]", file=sys.stderr)
         for e in errors:
             print(f"  - {e}", file=sys.stderr)
-        return 1
+        return VALIDATION_FAILED
 
     print("✅ Validation succeeded: all actions are well-formed.")
-    return 0
+    return VALIDATION_SUCCESS
 
 
 if __name__ == "__main__":  # pragma: no cover

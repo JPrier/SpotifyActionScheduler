@@ -10,7 +10,8 @@ dependencies       = [
     "python-dotenv>=1.0.0",
     "spotipy>=2.0.0",
     "schedule>=1.0.0",
-    "click>=8.0"
+    "click>=8.0",
+    "flask>=3.0"
 ]
 classifiers        = [
   "Programming Language :: Python :: 3",

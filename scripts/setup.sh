@@ -51,6 +51,9 @@ SPOTIFY_REDIRECT_URI=${SPOTIFY_REDIRECT_URI:-}
 SPOTIPY_REFRESH_TOKEN=${SPOTIPY_REFRESH_TOKEN:-}
 EOF
 
+  # Export credentials for subsequent steps
+  cat spotifyActionService/spotify.env >> "$GITHUB_ENV"
+
   # Decrypt actions.json if encrypted
   if [[ -f spotifyActionService/actions.json.gpg ]]; then
     echo "[INFO] Decrypting actions.json…"

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "actions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/action" }
+    }
+  },
+  "required": ["actions"],
+  "additionalProperties": false,
+  "$defs": {
+    "action": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "enum": ["sync", "archive"] }
+      },
+      "oneOf": [
+        { "$ref": "#/$defs/syncAction" },
+        { "$ref": "#/$defs/archiveAction" }
+      ],
+      "unevaluatedProperties": false
+    },
+    "syncAction": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "sync" },
+        "timeBetweenActInSeconds": { "type": "integer" },
+        "source_playlist_id": { "type": "string" },
+        "target_playlist_id": { "type": "string" },
+        "avoid_duplicates": { "type": "boolean", "default": true }
+      },
+      "required": ["type", "source_playlist_id", "target_playlist_id"],
+      "additionalProperties": false
+    },
+    "archiveAction": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "archive" },
+        "timeBetweenActInSeconds": { "type": "integer" },
+        "source_playlist_id": { "type": "string" },
+        "target_playlist_id": { "type": ["string", "null"] },
+        "avoid_duplicates": { "type": "boolean", "default": true },
+        "filter_by_time": { "type": "boolean", "default": true }
+      },
+      "required": ["type", "source_playlist_id"],
+      "additionalProperties": false
+    }
+  }
+}

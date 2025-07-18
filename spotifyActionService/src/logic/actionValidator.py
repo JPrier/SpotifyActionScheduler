@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 import sys
+import json
+from pathlib import Path
 
 from accessor.configLoader import load_json_file
-from models.actions import ACTION_MAP, ActionType
+from jsonschema import Draft202012Validator
+
+SCHEMA_PATH = Path(__file__).resolve().parents[3] / "actions.schema.json"
+
+with open(SCHEMA_PATH) as f:
+    _SCHEMA = json.load(f)
+_VALIDATOR = Draft202012Validator(_SCHEMA)
 
 # Return codes used throughout the application
 VALIDATION_SUCCESS = 0
@@ -20,47 +28,22 @@ def validate(filepath: str) -> int:
     return validate_data(data)
     
 def validate_data(data: dict) -> int:
-    # Ensure top-level "actions" is present and is a list
+    """Validate the given data against the actions JSON schema."""
+
     if "actions" not in data or not isinstance(data["actions"], list):
         print("[ERROR] Top-level 'actions' key missing or not a list.", file=sys.stderr)
         return VALIDATION_FAILED
 
-    errors: list[str] = []
-    for idx, raw in enumerate(data["actions"]):
-        ctx = f"actions[{idx}]"
-        if not isinstance(raw, dict):
-            errors.append(f"{ctx}: not an object")
-            continue
-
-        # Validate the type enum
-        typ = raw.get("type")
-        if typ is None:
-            errors.append(f"{ctx}: missing 'type' field")
-            continue
-        try:
-            a_type = ActionType(typ)
-        except ValueError:
-            errors.append(f"{ctx}: unknown action type '{typ}'")
-            continue
-
-        # Find the corresponding dataclass
-        cls = ACTION_MAP.get(a_type)
-        if cls is None:
-            errors.append(f"{ctx}: no dataclass registered for type '{typ}'")
-            continue
-
-        # Try to instantiate — dataclasses will raise on missing/wrong params
-        params = {k: v for k, v in raw.items() if k != "type"}
-        try:
-            cls(type=a_type, **params)
-        except TypeError as e:
-            errors.append(f"{ctx}: invalid parameters → {e}")
-
-    # Report
+    errors = sorted(_VALIDATOR.iter_errors(data), key=lambda e: e.path)
     if errors:
         print("[VALIDATION FAILED]", file=sys.stderr)
-        for e in errors:
-            print(f"  - {e}", file=sys.stderr)
+        for err in errors:
+            path = "".join(
+                f"[{p}]" if isinstance(p, int) else f".{p}" for p in err.absolute_path
+            )
+            if path.startswith("."):
+                path = path[1:]
+            print(f"  - {path or '<root>'}: {err.message}", file=sys.stderr)
         return VALIDATION_FAILED
 
     print("✅ Validation succeeded: all actions are well-formed.")

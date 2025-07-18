@@ -1,7 +1,6 @@
 import logic.actionValidator as under_test
 import pytest
 from _pytest.capture import CaptureFixture
-from models.actions import ACTION_MAP, ActionType
 
 
 def test_validate_json_load_error(
@@ -67,7 +66,7 @@ def test_validate_action_not_object(
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
-    assert "actions[0]: not an object" in captured.err
+    assert "actions[0]: 1 is not of type 'object'" in captured.err
 
 
 def test_validate_missing_type_field(
@@ -84,7 +83,7 @@ def test_validate_missing_type_field(
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
-    assert "actions[0]: missing 'type' field" in captured.err
+    assert "actions[0]: 'type' is a required property" in captured.err
 
 
 def test_validate_unknown_type(
@@ -101,38 +100,9 @@ def test_validate_unknown_type(
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
-    assert "actions[0]: unknown action type 'bogus'" in captured.err
+    assert "actions[0].type: 'bogus' is not one of ['sync', 'archive']" in captured.err
 
 
-def test_validate_unregistered_type(
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: CaptureFixture,
-) -> None:
-    monkeypatch.setattr(
-        under_test,
-        "load_json_file",
-        lambda path: {
-            "actions": [
-                {
-                    "type": "sync",
-                    "source_playlist_id": "s",
-                    "target_playlist_id": "t",
-                }
-            ]
-        },
-    )
-    # remove SyncAction mapping
-    monkeypatch.setitem(
-        ACTION_MAP,
-        ActionType.SYNC,
-        None,
-    )
-
-    code = under_test.validate("dummy.json")
-    captured = capsys.readouterr()
-    assert code == 1
-    assert "[VALIDATION FAILED]" in captured.err
-    assert "actions[0]: no dataclass registered for type 'sync'" in captured.err
 
 
 def test_validate_invalid_params(
@@ -149,7 +119,7 @@ def test_validate_invalid_params(
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
-    assert "actions[0]: invalid parameters" in captured.err
+    assert "actions[0]: {'type': 'sync'} is not valid under any of the given schemas" in captured.err
 
 
 def test_validate_success(

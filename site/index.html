@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spotify Action Validator</title>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.30.5/full/pyodide.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/8.12.0/ajv7.min.js"></script>
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.15/codemirror.min.css"
@@ -34,36 +34,30 @@
   <div id="output">—</div>
 
   <script>
-    async function loadEverything() {
-      const pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.30.5/full/" });
-      await pyodide.runPythonAsync(`
-import micropip
-await micropip.install("./spotify_action_validator-0.1-py3-none-any_emscripten_*.whl")
-`);
-      window.validate = pyodide.runPython;
-      console.log("✅ Pyodide & validator package loaded");
-    }
-
-    loadEverything();
-
+    let validate;
     const cm = CodeMirror.fromTextArea(document.getElementById("editor"), {
       lineNumbers: true,
       mode: { name: "javascript", json: true },
       viewportMargin: Infinity,
     });
 
-    document.getElementById("validateBtn").onclick = async () => {
-      const inputText = cm.getValue();
-      try {
-        const result = await window.validate(`
-import json
-from actionValidator import validate_data
-data = json.loads(${JSON.stringify(inputText)})
-print(validate_data(data))
-`);
-        document.getElementById("output").innerText = result;
-      } catch (err) {
-        document.getElementById("output").innerText = err;
+    fetch("../actions.schema.json")
+      .then((r) => r.json())
+      .then((schema) => {
+        const ajv = new Ajv({ allErrors: true });
+        validate = ajv.compile(schema);
+      });
+
+    document.getElementById("validateBtn").onclick = () => {
+      const data = JSON.parse(cm.getValue());
+      const valid = validate(data);
+      if (valid) {
+        document.getElementById("output").innerText = "0";
+      } else {
+        const msgs = validate.errors.map(
+          (e) => `${e.instancePath.slice(1) || "<root>"}: ${e.message}`
+        );
+        document.getElementById("output").innerText = msgs.join("\n");
       }
     };
   </script>

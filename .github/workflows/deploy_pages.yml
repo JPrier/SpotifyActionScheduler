@@ -5,9 +5,8 @@ on:
   push:
     branches: ["master"]
     paths:
-      - 'docs/validator/**'
-      - 'spotifyActionService/src/logic/**'
       - 'site/**'
+      - 'actions.schema.json'
   workflow_dispatch:
 
 permissions:
@@ -29,33 +28,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install pyodide-build & setup Emscripten
-        run: |
-          pip install pyodide-build
-          EMSDK_VER=4.0.9
-          echo "EMSDK_VER=$EMSDK_VER" >> "$GITHUB_ENV"
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd emsdk
-          ./emsdk install 4.0.9
-          ./emsdk activate 4.0.9
-          source emsdk_env.sh
-          cd ..
-
-      - name: Build Pyodide wheel
-        run: |
-          cd spotifyActionService/src/logic
-          pyodide build
-          mkdir -p ../../../docs/validator
-          cp dist/*.whl ../../../docs/validator/
-
-      - name: Copy website assets
-        run: |
-          cp -r docs/validator/* docs/validator/
+      - name: Copy schema
+        run: cp actions.schema.json site/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -63,7 +37,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/validator
+          path: site
 
       - name: Deploy to GitHub Pages
         id: deploy

@@ -31,6 +31,7 @@ class SpotifyAccessor:
         except Exception as e:
             logger.error(f"Failed to fetch current user ID: {e}")
             raise
+        return self.user_id
 
     def fetch_playlist_tracks(self, playlist_id: str) -> list[dict[str, Any]]:
         """

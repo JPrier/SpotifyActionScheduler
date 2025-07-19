@@ -12,7 +12,7 @@ class Action:
     """Base class for all actions."""
 
     type: ActionType
-    timeBetweenActInSeconds: int = 30  # Default to 1 hour
+    timeBetweenActInSeconds: int = 30  # Default to 30 seconds
 
 
 @dataclass

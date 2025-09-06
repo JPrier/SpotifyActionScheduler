@@ -9,32 +9,9 @@ RC="$HOME/.bashrc"
 # Ensure ~/.local/bin exists
 mkdir -p "$UV_BIN"
 
-# ----------- INSTALL just CLI -----------
-if ! command -v just &>/dev/null; then
-  echo "[INFO] Installing just CLI…"
-  curl -LsSf https://just.systems/install.sh | bash -s -- --to "$JUST_BIN"
-else
-  echo "[INFO] just already installed."
-fi
-
-# ----------- INSTALL uv CLI -----------
-if ! command -v uv &>/dev/null; then
-  echo "[INFO] Installing uv…"
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-else
-  echo "[INFO] uv already installed."
-fi
-
 # ----------- SETUP PATH for this session -----------
 export PATH="$JUST_BIN:$UV_BIN:$HOME/.cargo/bin:$PATH"
 export UV_LINK_MODE=copy
-
-# If running in GitHub Actions, add to PATH for subsequent steps
-if [[ -n "${GITHUB_ACTIONS-}" ]]; then
-  echo "$JUST_BIN"      >> "$GITHUB_PATH"
-  echo "$UV_BIN"        >> "$GITHUB_PATH"
-  echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-fi
 
 # ----------- SOURCE LOCAL ENV for dev -----------
 echo "[INFO] Setting up environment…"
@@ -63,8 +40,10 @@ EOF
 fi
 
 # ----------- INSTALL & SYNC TOOLS -----------
-echo "[INFO] Syncing & installing tools…"
-uv sync
+if [[ -z "${GITHUB_ACTIONS-}" ]]; then
+  echo "[INFO] Syncing & installing tools…"
+  uv sync
+fi
 
 # ----------- LOCAL-ONLY: persist PATH to ~/.bashrc -----------
 if [[ -n "${BASH_VERSION:-}" && -t 1 && -z "${GITHUB_ACTIONS-}" ]]; then

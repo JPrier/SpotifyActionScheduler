@@ -50,6 +50,8 @@ class ActionProcessor:
         match action.type:
             case ActionType.SYNC:
                 self.playlist_service.sync_playlists(action)
+            case ActionType.SYNC_LIKED:
+                self.playlist_service.sync_liked_tracks(action)
             case ActionType.ARCHIVE:
                 self.playlist_service.archive_playlists(action)
             case _:

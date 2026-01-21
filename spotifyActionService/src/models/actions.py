@@ -4,6 +4,7 @@ from enum import StrEnum
 
 class ActionType(StrEnum):
     SYNC = "sync"
+    SYNC_LIKED = "sync_liked"
     ARCHIVE = "archive"
 
 
@@ -23,6 +24,13 @@ class SyncAction(Action):
 
 
 @dataclass
+class SyncLikedAction(Action):
+    target_playlist_id: str
+    avoid_duplicates: bool = True
+    max_tracks: int = 500
+
+
+@dataclass
 class ArchiveAction(Action):
     source_playlist_id: str
     target_playlist_id: str | None
@@ -33,5 +41,6 @@ class ArchiveAction(Action):
 # Map each enum to its dataclass
 ACTION_MAP: dict[ActionType, type[Action]] = {
     ActionType.SYNC: SyncAction,
+    ActionType.SYNC_LIKED: SyncLikedAction,
     ActionType.ARCHIVE: ArchiveAction,
 }

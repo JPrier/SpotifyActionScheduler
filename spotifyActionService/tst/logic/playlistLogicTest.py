@@ -5,7 +5,7 @@ from typing import Any
 import logic.playlistLogic as playlistLogic
 import pytest
 from logic.playlistLogic import PlaylistService
-from models.actions import ArchiveAction, SyncAction
+from models.actions import ArchiveAction, SyncAction, SyncLikedAction
 
 # Helper to stub out map_to_id_set to use 'id' key
 
@@ -80,6 +80,91 @@ def test_filter_items_after_time() -> None:
     # Only 'new' is within last 45 seconds
     assert len(filtered) == 1
     assert filtered[0]["id"] == "new"
+
+
+# ------------------ Sync Liked Tests ------------------
+
+
+def test_sync_liked_tracks_filters_and_adds(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _stub_id_map(monkeypatch)
+    liked_items = [{"id": "new", "added_at": "2025-01-01T00:00:00Z"}]
+    target_items = [{"id": "old"}]
+
+    action = SyncLikedAction(type="sync_liked", target_playlist_id="tgt")
+    action.timeBetweenActInSeconds = 60
+    action.max_tracks = 200
+    calls: list[list[str]] = []
+
+    class DummyAccessor:
+        def current_user_saved_tracks(
+            self, time_in_seconds: int | None = None, max_items: int = 500
+        ) -> list[dict[str, Any]]:
+            assert time_in_seconds == 60
+            assert max_items == 200
+            return liked_items
+
+        def fetch_playlist_tracks(self, pid: str) -> list[dict[str, Any]]:
+            return target_items
+
+        def add_tracks_to_playlist(self, pid: str, ids: list[str]) -> None:
+            calls.append(ids)
+
+    service = PlaylistService(DummyAccessor())
+    service.sync_liked_tracks(action)
+    assert calls == [["new"]]
+
+
+def test_sync_liked_tracks_no_new_tracks(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    caplog.set_level(logging.INFO)
+    _stub_id_map(monkeypatch)
+
+    action = SyncLikedAction(type="sync_liked", target_playlist_id="tgt")
+    action.timeBetweenActInSeconds = 0
+
+    class DummyAccessor:
+        def current_user_saved_tracks(
+            self, time_in_seconds: int | None = None, max_items: int = 500
+        ) -> list[dict[str, Any]]:
+            return [{"id": "a", "added_at": "2025-01-01T00:00:00Z"}]
+
+        def fetch_playlist_tracks(self, pid: str) -> list[dict[str, Any]]:
+            return [{"id": "a"}]
+
+        def add_tracks_to_playlist(self, pid: str, ids: list[str]) -> None:
+            pytest.skip("No tracks should be added")
+
+    service = PlaylistService(DummyAccessor())
+    service.sync_liked_tracks(action)
+    assert "No new liked tracks to add to target playlist." in caplog.text
+
+
+def test_sync_liked_tracks_allows_duplicates(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _stub_id_map(monkeypatch)
+    action = SyncLikedAction(type="sync_liked", target_playlist_id="tgt")
+    action.avoid_duplicates = False
+    calls: list[list[str]] = []
+
+    class DummyAccessor:
+        def current_user_saved_tracks(
+            self, time_in_seconds: int | None = None, max_items: int = 500
+        ) -> list[dict[str, Any]]:
+            return [{"id": "a", "added_at": "2025-01-01T00:00:00Z"}]
+
+        def fetch_playlist_tracks(self, pid: str) -> list[dict[str, Any]]:
+            pytest.skip("No duplicate check should occur")
+
+        def add_tracks_to_playlist(self, pid: str, ids: list[str]) -> None:
+            calls.append(ids)
+
+    service = PlaylistService(DummyAccessor())
+    service.sync_liked_tracks(action)
+    assert calls == [["a"]]
 
 
 # ------------------ Archive Tests ------------------

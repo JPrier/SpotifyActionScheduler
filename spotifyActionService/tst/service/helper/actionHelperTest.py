@@ -2,7 +2,13 @@ import json
 from pathlib import Path
 
 import pytest
-from models.actions import Action, ActionType, ArchiveAction, SyncAction
+from models.actions import (
+    Action,
+    ActionType,
+    ArchiveAction,
+    SyncAction,
+    SyncLikedAction,
+)
 from service.helper.actionHelper import ACTION_MAP, ActionProcessor
 
 
@@ -10,6 +16,7 @@ def test_parse_valid_actions(tmp_path: Path) -> None:
     data = {
         "actions": [
             {"type": "sync", "source_playlist_id": "s1", "target_playlist_id": "t1"},
+            {"type": "sync_liked", "target_playlist_id": "t2"},
             {"type": "archive", "source_playlist_id": "s2", "target_playlist_id": "t2"},
         ]
     }
@@ -18,14 +25,19 @@ def test_parse_valid_actions(tmp_path: Path) -> None:
 
     processor = ActionProcessor(playlist_service=None)
     actions = processor.parse_action_file(str(file))
-    assert len(actions) == 2
-    act1, act2 = actions
+    assert len(actions) == 3
+    act1, act2, act3 = actions
     assert isinstance(act1, SyncAction)
     assert act1.type == ActionType.SYNC
     assert act1.source_playlist_id == "s1"
     assert act1.target_playlist_id == "t1"
-    assert isinstance(act2, ArchiveAction)
-    assert act2.type == ActionType.ARCHIVE
+    assert isinstance(act2, SyncLikedAction)
+    assert act2.type == ActionType.SYNC_LIKED
+    assert act2.target_playlist_id == "t2"
+    assert act2.avoid_duplicates is True
+    assert act2.max_tracks == 500
+    assert isinstance(act3, ArchiveAction)
+    assert act3.type == ActionType.ARCHIVE
 
 
 def test_parse_missing_type_key_raises_keyerror(tmp_path: Path) -> None:
@@ -89,6 +101,9 @@ def test_handle_action_dispatch() -> None:
         def sync_playlists(self, action: Action) -> None:
             calls.append(("sync", action))
 
+        def sync_liked_tracks(self, action: Action) -> None:
+            calls.append(("sync_liked", action))
+
         def archive_playlists(self, action: Action) -> None:
             calls.append(("archive", action))
 
@@ -99,6 +114,13 @@ def test_handle_action_dispatch() -> None:
     )
     processor.handle_action(sync_action)
     assert calls == [("sync", sync_action)]
+
+    calls.clear()
+    sync_liked_action = SyncLikedAction(
+        type=ActionType.SYNC_LIKED, target_playlist_id="t"
+    )
+    processor.handle_action(sync_liked_action)
+    assert calls == [("sync_liked", sync_liked_action)]
 
     calls.clear()
     archive_action = ArchiveAction(
@@ -114,6 +136,9 @@ def test_handle_action_default(monkeypatch: pytest.MonkeyPatch) -> None:
     class DummyService:
         def sync_playlists(self, action: Action) -> None:
             calls.append(("sync", action))
+
+        def sync_liked_tracks(self, action: Action) -> None:
+            calls.append(("sync_liked", action))
 
         def archive_playlists(self, action: Action) -> None:
             calls.append(("archive", action))
@@ -138,6 +163,7 @@ def test_handle_actions_iterates() -> None:
     a2 = ArchiveAction(
         type=ActionType.ARCHIVE, source_playlist_id="s2", target_playlist_id="t2"
     )
-    processor.handle_actions([a1, a2])
+    a3 = SyncLikedAction(type=ActionType.SYNC_LIKED, target_playlist_id="t3")
+    processor.handle_actions([a1, a2, a3])
 
-    assert calls == [a1, a2]
+    assert calls == [a1, a2, a3]

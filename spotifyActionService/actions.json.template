@@ -16,6 +16,12 @@
             "type": "sync",
             "source_playlist_id": "37i9dQZF1DX8FwnYE6PRvL",
             "target_playlist_id": "37i9dQZF1DX2TRYkJECvfB"
+        },
+        {
+            "type": "sync_liked",
+            "target_playlist_id": "59oVktcIDCuuw3QwLVPol5",
+            "avoid_duplicates": true,
+            "max_tracks": 500
         }
     ]
 }

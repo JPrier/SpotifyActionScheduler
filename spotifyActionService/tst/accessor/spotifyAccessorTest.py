@@ -1,4 +1,5 @@
 import logging
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import pytest
@@ -31,6 +32,9 @@ def dummy_client() -> object:
 
         def playlist(self, playlist_id: str, fields: str) -> dict[str, Any]:
             return {"id": playlist_id}
+
+        def current_user_saved_tracks(self, limit: int) -> dict[str, Any]:
+            return {"items": [], "next": None}
 
         def current_user_playlists(self, limit: int) -> dict[str, Any]:
             return {"items": [], "next": None}
@@ -130,6 +134,63 @@ def test_fetch_playlist_tracks_multiple_pages(
     under_test = SpotifyAccessor(client=dummy_client, user_id="u999")
     tracks = under_test.fetch_playlist_tracks("plX")
     assert [t["track"]["id"] for t in tracks] == ["1", "2"]
+
+
+def test_current_user_saved_tracks_multiple_pages(
+    dummy_client: object,
+) -> None:
+    page1 = {"items": [{"added_at": "a", "track": {"id": "1"}}], "next": "url2"}
+    page2 = {"items": [{"added_at": "b", "track": {"id": "2"}}], "next": None}
+
+    dummy_client.current_user_saved_tracks = lambda limit: page1
+    dummy_client.next = lambda resp: page2
+
+    under_test = SpotifyAccessor(client=dummy_client, user_id="u999")
+    tracks = under_test.current_user_saved_tracks(max_items=10)
+    assert [t["track"]["id"] for t in tracks] == ["1", "2"]
+
+
+def test_current_user_saved_tracks_respects_max_items(
+    dummy_client: object,
+) -> None:
+    page1 = {
+        "items": [
+            {"added_at": "a", "track": {"id": "1"}},
+            {"added_at": "b", "track": {"id": "2"}},
+        ],
+        "next": "url2",
+    }
+    page2 = {"items": [{"added_at": "c", "track": {"id": "3"}}], "next": None}
+
+    dummy_client.current_user_saved_tracks = lambda limit: page1
+    dummy_client.next = lambda resp: page2
+
+    under_test = SpotifyAccessor(client=dummy_client, user_id="u999")
+    tracks = under_test.current_user_saved_tracks(max_items=2)
+    assert [t["track"]["id"] for t in tracks] == ["1", "2"]
+
+
+def test_current_user_saved_tracks_respects_time_window(
+    dummy_client: object,
+) -> None:
+    now = datetime.now(UTC)
+    within = (now - timedelta(seconds=10)).isoformat().replace("+00:00", "Z")
+    older = (now - timedelta(seconds=100)).isoformat().replace("+00:00", "Z")
+    page1 = {
+        "items": [
+            {"added_at": within, "track": {"id": "1"}},
+            {"added_at": older, "track": {"id": "2"}},
+        ],
+        "next": "url2",
+    }
+    page2 = {"items": [{"added_at": within, "track": {"id": "3"}}], "next": None}
+
+    dummy_client.current_user_saved_tracks = lambda limit: page1
+    dummy_client.next = lambda resp: page2
+
+    under_test = SpotifyAccessor(client=dummy_client, user_id="u999")
+    tracks = under_test.current_user_saved_tracks(time_in_seconds=60, max_items=10)
+    assert [t["track"]["id"] for t in tracks] == ["1"]
 
 
 def test_add_tracks_to_playlist_success(

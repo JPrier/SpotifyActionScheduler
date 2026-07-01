@@ -100,7 +100,10 @@ def test_validate_unknown_type(
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
-    assert "actions[0].type: 'bogus' is not one of ['sync', 'archive']" in captured.err
+    assert (
+        "actions[0].type: 'bogus' is not one of ['sync', 'sync_liked', 'archive']"
+        in captured.err
+    )
 
 
 
@@ -119,7 +122,10 @@ def test_validate_invalid_params(
     captured = capsys.readouterr()
     assert code == 1
     assert "[VALIDATION FAILED]" in captured.err
-    assert "actions[0]: {'type': 'sync'} is not valid under any of the given schemas" in captured.err
+    assert (
+        "actions[0]: {'type': 'sync'} is not valid under any of the given schemas"
+        in captured.err
+    )
 
 
 def test_validate_success(
@@ -134,6 +140,29 @@ def test_validate_success(
                 {
                     "type": "sync",
                     "source_playlist_id": "s",
+                    "target_playlist_id": "t",
+                }
+            ]
+        },
+    )
+
+    code = under_test.validate("dummy.json")
+    captured = capsys.readouterr()
+    assert code == 0
+    assert "✅ Validation succeeded: all actions are well-formed." in captured.out
+
+
+def test_validate_sync_liked_success(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: CaptureFixture,
+) -> None:
+    monkeypatch.setattr(
+        under_test,
+        "load_json_file",
+        lambda path: {
+            "actions": [
+                {
+                    "type": "sync_liked",
                     "target_playlist_id": "t",
                 }
             ]

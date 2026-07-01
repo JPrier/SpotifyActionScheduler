@@ -1,3 +1,4 @@
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from spotipy import Spotify
@@ -55,6 +56,63 @@ class SpotifyAccessor:
 
         logger.info(f"Fetched {len(tracks)} tracks from playlist {playlist_id}")
         return tracks
+
+    def current_user_saved_tracks(
+        self,
+        time_in_seconds: int | None = None,
+        max_items: int = 500,
+    ) -> list[dict[str, Any]]:
+        """
+        Fetch all liked songs for the current user.
+        Handles pagination automatically with optional time-window and size limits.
+        """
+        tracks: list[dict[str, Any]] = []
+        page = 0
+        cutoff = None
+        if time_in_seconds and time_in_seconds > 0:
+            cutoff = datetime.now(UTC) - timedelta(seconds=time_in_seconds)
+        resp = self.client.current_user_saved_tracks(limit=50)
+        logger.info(f"Fetched liked songs page {page}: {resp}")
+        collected, reached_cutoff = self._collect_saved_tracks(
+            resp.get("items", []), tracks, cutoff, max_items
+        )
+        tracks.extend(collected)
+
+        while resp.get("next"):
+            if len(tracks) >= max_items or reached_cutoff:
+                break
+            page += 1
+            resp = self.client.next(resp)
+            logger.info(f"Fetched liked songs page {page}: {resp}")
+            collected, reached_cutoff = self._collect_saved_tracks(
+                resp.get("items", []), tracks, cutoff, max_items
+            )
+            tracks.extend(collected)
+
+        logger.info(f"Fetched {len(tracks)} liked songs")
+        return tracks
+
+    def _collect_saved_tracks(
+        self,
+        items: list[dict[str, Any]],
+        tracks: list[dict[str, Any]],
+        cutoff: datetime | None,
+        max_items: int,
+    ) -> tuple[list[dict[str, Any]], bool]:
+        collected: list[dict[str, Any]] = []
+        reached_cutoff = False
+        for item in items:
+            if len(tracks) + len(collected) >= max_items:
+                break
+            if cutoff:
+                added_at = datetime.fromisoformat(
+                    item["added_at"].replace("Z", "+00:00")
+                )
+                if added_at <= cutoff:
+                    reached_cutoff = True
+                    break
+            collected.append(item)
+        return collected, reached_cutoff
 
     def add_tracks_to_playlist(self, playlist_id: str, track_ids: list[str]) -> None:
         """

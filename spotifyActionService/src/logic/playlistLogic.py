@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 
 from accessor.spotifyAccessor import SpotifyAccessor
 from logic.mapper.spotifyMapper import map_to_id_set
-from models.actions import ArchiveAction, SyncAction
+from models.actions import ArchiveAction, SyncAction, SyncLikedAction
 from util.logger import logger
 
 
@@ -65,6 +65,52 @@ class PlaylistService:
         self.accessor.add_tracks_to_playlist(action.target_playlist_id, tracks_to_add)
         logger.info(
             "Added %s tracks to target playlist: %s",
+            len(tracks_to_add),
+            action.target_playlist_id,
+        )
+
+    def sync_liked_tracks(self, action: SyncLikedAction) -> None:
+        """
+        Synchronize the current user's liked tracks into a target playlist.
+        Only adds tracks that are liked but not already in the target playlist.
+        """
+        logger.info("Fetching liked songs...")
+        liked_items = self.accessor.current_user_saved_tracks(
+            time_in_seconds=action.timeBetweenActInSeconds,
+            max_items=action.max_tracks,
+        )
+
+        liked_ids = map_to_id_set(liked_items)
+        logger.info("Found %s liked tracks: %s", len(liked_ids), liked_ids)
+
+        if not liked_ids:
+            logger.info("No liked songs found in the specified time period.")
+            return
+
+        if not action.avoid_duplicates:
+            tracks_to_add = list(liked_ids)
+            logger.info("Tracks to add without duplicate check: %s", tracks_to_add)
+        else:
+            logger.info("Fetching target playlist items...")
+            target_items = self.accessor.fetch_playlist_tracks(
+                action.target_playlist_id
+            )
+            target_ids = map_to_id_set(target_items)
+
+            logger.info(
+                "Found %s tracks in target playlist: %s", len(target_ids), target_ids
+            )
+
+            tracks_to_add = [tid for tid in liked_ids if tid not in target_ids]
+            logger.info("Tracks to add: %s", tracks_to_add)
+
+        if not tracks_to_add:
+            logger.info("No new liked tracks to add to target playlist.")
+            return
+
+        self.accessor.add_tracks_to_playlist(action.target_playlist_id, tracks_to_add)
+        logger.info(
+            "Added %s liked tracks to target playlist: %s",
             len(tracks_to_add),
             action.target_playlist_id,
         )

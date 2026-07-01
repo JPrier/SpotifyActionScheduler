@@ -14,10 +14,11 @@
       "type": "object",
       "required": ["type"],
       "properties": {
-        "type": { "type": "string", "enum": ["sync", "archive"] }
+        "type": { "type": "string", "enum": ["sync", "sync_liked", "archive"] }
       },
       "oneOf": [
         { "$ref": "#/$defs/syncAction" },
+        { "$ref": "#/$defs/syncLikedAction" },
         { "$ref": "#/$defs/archiveAction" }
       ],
       "unevaluatedProperties": false
@@ -45,6 +46,18 @@
         "filter_by_time": { "type": "boolean", "default": true }
       },
       "required": ["type", "source_playlist_id"],
+      "additionalProperties": false
+    },
+    "syncLikedAction": {
+      "type": "object",
+      "properties": {
+        "type": { "const": "sync_liked" },
+        "timeBetweenActInSeconds": { "type": "integer" },
+        "target_playlist_id": { "type": "string" },
+        "avoid_duplicates": { "type": "boolean", "default": true },
+        "max_tracks": { "type": "integer", "default": 500 }
+      },
+      "required": ["type", "target_playlist_id"],
       "additionalProperties": false
     }
   }

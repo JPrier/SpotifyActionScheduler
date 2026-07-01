@@ -3,6 +3,7 @@ import click
 from .mainHandler import (
     do_archive,
     do_sync,
+    do_sync_liked,
     run_actions_once,
     start_scheduled_actions,
 )
@@ -69,6 +70,45 @@ def archive(
         days=days,
         avoid_duplicates=no_duplicates,
         filter_by_time=no_time_filter,
+    )
+
+
+@cli.command(
+    "sync-liked",
+    help="Sync tracks Liked in the last N hours into TARGET_PLAYLIST_ID",
+)
+@click.argument("target_playlist_id")
+@click.option(
+    "--hours",
+    "-h",
+    type=int,
+    default=24,
+    show_default=True,
+    help="Only sync tracks liked within this many hours",
+)
+@click.option(
+    "--no-duplicates/--allow-duplicates",
+    default=True,
+    help="Skip tracks already in the target playlist",
+)
+@click.option(
+    "--max-tracks",
+    type=int,
+    default=500,
+    show_default=True,
+    help="Maximum number of liked tracks to scan",
+)
+def sync_liked(
+    target_playlist_id: str,
+    hours: int,
+    no_duplicates: bool,
+    max_tracks: int,
+) -> None:
+    do_sync_liked(
+        target_playlist_id,
+        hours=hours,
+        avoid_duplicates=no_duplicates,
+        max_tracks=max_tracks,
     )
 
 

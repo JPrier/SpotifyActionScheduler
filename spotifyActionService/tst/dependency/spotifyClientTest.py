@@ -33,5 +33,3 @@ def test_refresh_token_used_when_cache_missing(monkeypatch: pytest.MonkeyPatch) 
     client = under_test.get_client()
     assert client.auth_manager is dummy
     assert dummy.refreshed_with == ["refresh"]
-
-

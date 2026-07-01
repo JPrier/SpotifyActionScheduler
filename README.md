@@ -127,9 +127,17 @@ Here’s an example **`actions.json`** with a couple of typical scenarios:
     "source_playlist_id": "37i9dQZF1DX8FwnYE6PRvL",
     "avoid_duplicates": true,
     "timeBetweenActInSeconds": 86400
+  },
+  {
+    "type": "sync_liked",
+    "target_playlist_id": "37i9dQZF1DX2TRYkJECvfB",
+    "timeBetweenActInSeconds": 86400,
+    "max_tracks": 500
   }
 ]
 ```
+
+The **`sync_liked`** action copies tracks from your Liked Songs into `target_playlist_id`, but only ones saved within the last `timeBetweenActInSeconds` seconds (as with `archive`, this field doubles as both the scheduler's run interval and the lookback window). `max_tracks` caps how many of your most-recently-liked tracks it will scan per run (default `500`).
 
 **How to find Spotify Playlist IDs:** You can get the playlist ID from the Spotify app or web URL. For example, in a Spotify playlist link like `https://open.spotify.com/playlist/37i9dQZF1DX2TRYkJECvfB`, the string after `/playlist/` (here `37i9dQZF1DX2TRYkJECvfB`) is the playlist ID.
 

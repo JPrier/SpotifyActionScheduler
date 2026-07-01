@@ -27,8 +27,6 @@ def get_client() -> Spotify:
         try:
             auth_manager.refresh_access_token(refresh_token)
         except SpotifyOauthError as exc:
-            raise SpotifyOauthError(
-                f"failed to refresh token: {exc}"
-            ) from exc
+            raise SpotifyOauthError(f"failed to refresh token: {exc}") from exc
 
     return Spotify(auth_manager=auth_manager)

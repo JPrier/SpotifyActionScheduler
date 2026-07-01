@@ -221,6 +221,7 @@ def test_add_tracks_to_playlist_failure(
         under_test.add_tracks_to_playlist("pFAIL", ["1"])
     assert "Failed to add tracks to playlist pFAIL: API down" in caplog.text
 
+
 def test_get_playlist_metadata_success(
     dummy_client: object,
 ) -> None:

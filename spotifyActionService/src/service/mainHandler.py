@@ -3,7 +3,7 @@ import logic.playlistLogic as _pl_logic
 import service.onDemandHandler as _odh
 import service.schedulerHandler as _sch
 from accessor.spotifyAccessor import SpotifyAccessor as _SpotifyAccessor
-from models.actions import ActionType, ArchiveAction, SyncAction
+from models.actions import ActionType, ArchiveAction, SyncAction, SyncLikedAction
 
 
 def do_sync(
@@ -52,6 +52,29 @@ def do_archive(
     service.archive_playlists(action)
     tgt = target_playlist_id or "removed"
     print(f"✅ Archived from {source_playlist_id!r} → {tgt!r}")
+
+
+def do_sync_liked(
+    target_playlist_id: str,
+    hours: int = 24,
+    avoid_duplicates: bool = True,
+    max_tracks: int = 500,
+) -> None:
+    """
+    Sync tracks Liked (saved) within the last `hours` hours into a playlist.
+    """
+    client = _spotifyClient.get_client()
+    accessor = _SpotifyAccessor(client)
+    service = _pl_logic.PlaylistService(accessor)
+    action = SyncLikedAction(
+        type=ActionType.SYNC_LIKED,
+        timeBetweenActInSeconds=hours * 3600,
+        target_playlist_id=target_playlist_id,
+        avoid_duplicates=avoid_duplicates,
+        max_tracks=max_tracks,
+    )
+    service.sync_liked_tracks(action)
+    print(f"✅ Synced liked songs from last {hours}h → {target_playlist_id!r}")
 
 
 def run_actions_once() -> None:

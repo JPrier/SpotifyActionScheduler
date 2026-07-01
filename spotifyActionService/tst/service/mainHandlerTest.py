@@ -7,7 +7,13 @@ import service.mainHandler as under_test
 from accessor.spotifyAccessor import SpotifyAccessor
 from dependency import spotifyClient
 from logic import playlistLogic
-from models.actions import Action, ActionType, ArchiveAction, SyncAction
+from models.actions import (
+    Action,
+    ActionType,
+    ArchiveAction,
+    SyncAction,
+    SyncLikedAction,
+)
 from service import onDemandHandler, schedulerHandler
 
 
@@ -109,6 +115,41 @@ def test_do_archive(
     assert action.timeBetweenActInSeconds == 5 * 24 * 3600
     assert action.avoid_duplicates is True
     assert action.filter_by_time is False
+
+
+def test_do_sync_liked(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    calls: list[Any] = []
+
+    class DummyService:
+        def __init__(self, accessor: Action) -> None:
+            calls.append(("init", accessor))
+
+        def sync_liked_tracks(self, action: Action) -> None:
+            calls.append(("sync_liked", action))
+
+    monkeypatch.setattr(
+        playlistLogic,
+        "PlaylistService",
+        DummyService,
+    )
+
+    under_test.do_sync_liked("TGT3", hours=6, avoid_duplicates=False, max_tracks=200)
+
+    out = capsys.readouterr().out.strip()
+    assert out == "✅ Synced liked songs from last 6h → 'TGT3'"
+
+    kind, action = calls[1]
+    assert kind == "sync_liked"
+
+    assert isinstance(action, SyncLikedAction)
+    assert action.type == ActionType.SYNC_LIKED
+    assert action.target_playlist_id == "TGT3"
+    assert action.timeBetweenActInSeconds == 6 * 3600
+    assert action.avoid_duplicates is False
+    assert action.max_tracks == 200
 
 
 def test_run_actions_once(monkeypatch: pytest.MonkeyPatch) -> None:

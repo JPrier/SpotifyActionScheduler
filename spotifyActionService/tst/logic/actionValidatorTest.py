@@ -106,8 +106,6 @@ def test_validate_unknown_type(
     )
 
 
-
-
 def test_validate_invalid_params(
     monkeypatch: pytest.MonkeyPatch,
     capsys: CaptureFixture,

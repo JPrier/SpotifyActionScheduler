@@ -89,6 +89,53 @@ def test_cli_archive_custom_flags(
     assert calls == [("sID", "tID", 10, False, False)]
 
 
+def test_cli_sync_liked_defaults(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    runner = CliRunner()
+    calls: list[tuple[str, int, bool, int]] = []
+    monkeypatch.setattr(
+        cli_module,
+        "do_sync_liked",
+        lambda tgt, hours, avoid_duplicates, max_tracks: calls.append(
+            (tgt, hours, avoid_duplicates, max_tracks)
+        ),
+    )
+
+    result = runner.invoke(cli_module.cli, ["sync-liked", "tgt789"])
+    assert result.exit_code == 0
+    assert calls == [("tgt789", 24, True, 500)]
+
+
+def test_cli_sync_liked_custom_flags(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    runner = CliRunner()
+    calls: list[tuple[str, int, bool, int]] = []
+    monkeypatch.setattr(
+        cli_module,
+        "do_sync_liked",
+        lambda tgt, hours, avoid_duplicates, max_tracks: calls.append(
+            (tgt, hours, avoid_duplicates, max_tracks)
+        ),
+    )
+
+    result = runner.invoke(
+        cli_module.cli,
+        [
+            "sync-liked",
+            "tgt1",
+            "--hours",
+            "12",
+            "--allow-duplicates",
+            "--max-tracks",
+            "100",
+        ],
+    )
+    assert result.exit_code == 0
+    assert calls == [("tgt1", 12, False, 100)]
+
+
 def test_cli_run_once_invokes_run_actions_once(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

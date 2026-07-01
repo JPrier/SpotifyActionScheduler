@@ -24,9 +24,10 @@ def validate(filepath: str) -> int:
     except Exception as e:
         print(f"[ERROR] Unable to load JSON: {e}", file=sys.stderr)
         return VALIDATION_FAILED
-    
+
     return validate_data(data)
-    
+
+
 def validate_data(data: dict) -> int:
     """Validate the given data against the actions JSON schema."""
 

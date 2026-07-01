@@ -14,7 +14,10 @@ def get_client() -> Spotify:
     if missing:
         raise OSError(f"Missing environment variables: {', '.join(missing)}")
 
-    scope = "playlist-read-private playlist-modify-public playlist-modify-private"
+    scope = (
+        "playlist-read-private playlist-modify-public playlist-modify-private "
+        "user-library-read"
+    )
     auth_manager = SpotifyOAuth(
         client_id=get_environ("SPOTIFY_CLIENT_ID"),
         client_secret=get_environ("SPOTIFY_CLIENT_SECRET"),

@@ -47,5 +47,14 @@ jobs:
       - name: Run Integration Tests
         env:
           PYTHONPATH: ${{ github.workspace }}/spotifyActionService/src
+          SPOTIFY_CLIENT_ID:    ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIPY_CLIENT_SECRET }}
+          SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIPY_REDIRECT_URI }}
+          SPOTIPY_REFRESH_TOKEN: ${{ secrets.SPOTIPY_REFRESH_TOKEN }}
         run: |
+          if [ -z "$SPOTIFY_CLIENT_ID" ] || [ -z "$SPOTIFY_CLIENT_SECRET" ] || \
+             [ -z "$SPOTIFY_REDIRECT_URI" ] || [ -z "$SPOTIPY_REFRESH_TOKEN" ]; then
+            echo "Spotify credentials not available; skipping integration tests."
+            exit 0
+          fi
           uv run --extra dev pytest -m integration
